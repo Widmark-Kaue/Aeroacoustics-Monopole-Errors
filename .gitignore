@@ -1,7 +1,31 @@
+# my ignore
+remote/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
+# OpenFoam ignore
+*.gz
+log.*
+log[0-9].*
+postProcessing
+*~
+processor*
+[0-9]*
+[0-9]*.[0-9]*
+!0.org
+!0.orig
+constant/extendedFeatureEdgeMesh
+*.eMesh
+polyMesh/
+constant/polyMesh/*
+!constant/polyMesh/blockMeshDict
+constant/cellToRegion
+*.OpenFOAM
+dynamicCode
+
 
 # C extensions
 *.so
