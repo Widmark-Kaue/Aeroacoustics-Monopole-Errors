@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "aeroacoustics-analysis-of-resonators"
+version = "0.1.0"
+description = ""
+authors = ["Widmark Kauê <66392718+Widmark-Kaue@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "aeroacoustics_analysis_of_resonators"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+numpy = "^1.24.2"
+scipy = "^1.10.1"
+matplotlib = "^3.7.1"
+pathlib = "^1.0.1"
+jupyter = "^1.0.0"
+ipykernel = "^6.22.0"
+sympy = "^1.11.1"
+control = "^0.9.3.post2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
