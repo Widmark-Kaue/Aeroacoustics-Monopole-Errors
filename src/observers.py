@@ -1,17 +1,13 @@
 #%% Librarys
-import numpy as np
-
-from src.datadrive import PATH_WRITE
 from re import sub
-from pathlib import Path
 from string import ascii_letters
 
+import numpy as np
+
+from src.path import PATH_PROBES
+
+
 #%% Funções
-# PATH_WRITE = Path().absolute().parent / 'observers'
-# if not PATH_WRITE.exists():
-#     PATH_WRITE.mkdir()
-
-
 def probes(
     number_of_probes: int = 30,
     lim: tuple = (2, 102),
@@ -20,7 +16,7 @@ def probes(
 ):
     p = np.linspace(lim[0], lim[1], number_of_probes)
 
-    arq = open(PATH_WRITE / 'templateProbe.txt', 'r').read()
+    arq = open(PATH_PROBES / 'templateProbe.txt', 'r').read()
 
     arq = sub('&', name_of_archive, arq)
     arq = sub('@', field, arq)
@@ -32,7 +28,7 @@ def probes(
 
     arq = sub('#', write, arq)
 
-    with open(PATH_WRITE / name_of_archive, 'w') as file:
+    with open(PATH_PROBES / name_of_archive, 'w') as file:
         file.write(arq)
 
 
@@ -41,7 +37,7 @@ def microphones(
 ):
     m = np.linspace(lim[0], lim[1], number_of_observer)
     letter = list(ascii_letters)
-    with open(PATH_WRITE / 'microphonesTimeS.txt', 'w') as file:
+    with open(PATH_PROBES / 'microphonesTimeS.txt', 'w') as file:
         file.write('observers\n{\n')
         for k, i in enumerate(m):
             file.write(f'\tR-{letter[k]}\n' + '\t{\n')
