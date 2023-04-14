@@ -2,20 +2,20 @@
 name = "aeroacoustics-resonators"
 version = "0.1.0"
 description = ""
-authors = ["Widmark Kauê <66392718+Widmark-Kaue@users.noreply.github.com>"]
+authors = ["Widmark Kaue Silva Cardoso <widmark.kaue@grad.ufsc.br>"]
 readme = "README.md"
-packages = [{include = "aeroacoustics_analysis_of_resonators"}]
+packages = [{include = "aeroacoustics_resonators"}]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
 numpy = "^1.24.2"
-scipy = "^1.10.1"
 matplotlib = "^3.7.1"
+scipy = "^1.10.1"
+sympy = "^1.11.1"
 pathlib = "^1.0.1"
+control = "^0.9.3.post2"
 jupyter = "^1.0.0"
 ipykernel = "^6.22.0"
-sympy = "^1.11.1"
-control = "^0.9.3.post2"
 blue = "^0.9.1"
 
 
