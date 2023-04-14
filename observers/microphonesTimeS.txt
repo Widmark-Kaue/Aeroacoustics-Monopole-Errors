@@ -1,0 +1,309 @@
+observers
+{
+	R-a
+	{
+		position	(2.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-b
+	{
+		position	(4.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-c
+	{
+		position	(6.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-d
+	{
+		position	(8.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-e
+	{
+		position	(10.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-f
+	{
+		position	(12.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-g
+	{
+		position	(14.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-h
+	{
+		position	(16.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-i
+	{
+		position	(18.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-j
+	{
+		position	(20.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-k
+	{
+		position	(22.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-l
+	{
+		position	(24.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-m
+	{
+		position	(26.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-n
+	{
+		position	(28.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-o
+	{
+		position	(30.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-p
+	{
+		position	(32.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-q
+	{
+		position	(34.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-r
+	{
+		position	(36.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-s
+	{
+		position	(38.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-t
+	{
+		position	(40.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-u
+	{
+		position	(42.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-v
+	{
+		position	(44.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-w
+	{
+		position	(46.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-x
+	{
+		position	(48.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-y
+	{
+		position	(50.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-z
+	{
+		position	(52.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-A
+	{
+		position	(54.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-B
+	{
+		position	(56.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-C
+	{
+		position	(58.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-D
+	{
+		position	(60.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-E
+	{
+		position	(62.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-F
+	{
+		position	(64.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-G
+	{
+		position	(66.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-H
+	{
+		position	(68.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-I
+	{
+		position	(70.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-J
+	{
+		position	(72.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-K
+	{
+		position	(74.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-L
+	{
+		position	(76.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-M
+	{
+		position	(78.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-N
+	{
+		position	(80.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-O
+	{
+		position	(82.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-P
+	{
+		position	(84.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-Q
+	{
+		position	(86.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-R
+	{
+		position	(88.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-S
+	{
+		position	(90.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-T
+	{
+		position	(92.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-U
+	{
+		position	(94.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-V
+	{
+		position	(96.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-W
+	{
+		position	(98.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-X
+	{
+		position	(100.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+	R-Y
+	{
+		position	(102.0 0 0.5);
+		pRef	2.0e-5;
+		fftFreq	1024;
+	}
+}
