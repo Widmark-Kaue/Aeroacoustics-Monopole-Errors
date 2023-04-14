@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "aeroacoustics-analysis-of-resonators"
+name = "aeroacoustics-resonators"
 version = "0.1.0"
 description = ""
 authors = ["Widmark Kauê <66392718+Widmark-Kaue@users.noreply.github.com>"]
