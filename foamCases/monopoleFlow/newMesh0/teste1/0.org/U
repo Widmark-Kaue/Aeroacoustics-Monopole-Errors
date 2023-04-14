@@ -1,0 +1,55 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1812                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     1812;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+AoA             0.0;
+M               0.5;
+soundSpeed      346.527346794;
+
+uFreestream    #calc  "cos(degToRad($AoA))*$M*$soundSpeed";
+vFreestream    #calc  "sin(degToRad($AoA))*$M*$soundSpeed";
+
+
+internalField   uniform ($uFreestream $vFreestream 0); // Initial velocity field, change accordingly
+
+
+boundaryField
+{
+    frontAndBack 
+    {
+        type            empty;
+    }
+//    "(top|bottom|left|right)" 
+    outer 
+    {
+
+        // type            freestreamVelocity;
+        // freestreamValue $internalField;
+        // value           $internalField;
+
+
+        type            waveTransmissive;
+        field           U;
+        phi             phi;
+        rho             rho;
+        psi             thermo:psi;
+        gamma           1.4;
+        value           $internalField;
+    }
+}
+
+// ************************************************************************* //

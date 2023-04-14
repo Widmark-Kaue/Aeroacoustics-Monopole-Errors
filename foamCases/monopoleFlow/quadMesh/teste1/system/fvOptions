@@ -1,0 +1,111 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvOptions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+limitT
+{
+    type            limitTemperature;
+    active          yes;
+
+    selectionMode   all;
+    min             100;
+    max             500;
+}
+
+codedSource
+{
+    name            monoPole;
+    type            scalarCodedSource;
+    active          true;
+    selectionMode   all;
+    scalarCodedSourceCoeffs
+    {
+        fields          (rhoE);//(h);
+        selectionMode   all;   
+
+        codeCorrect
+        #{
+            Info<< "**codeCorrect**" << endl;
+        #};
+
+        codeAddSup
+        #{
+            scalar t = mesh().time().value();
+            const scalarField& V = mesh_.V();
+            scalarField& heSource = eqn.source();
+            const scalar epsilon=1.0;
+            const scalar gamma=1.4;
+            const scalar p0=101325.0;
+            const scalar T0=298.15;
+            const scalar R=8314.46261815324/28.9;
+            const scalar c0=sqrt(gamma*R*T0);
+            const scalar delta=1.0; // length scale
+            const scalar tStar=1.0;//delta/c0;
+            Info << "R, c0, tStar=" << R << ", "  << c0  << ", " << tStar << endl;
+            scalar alpha=std::log(2.0)/9.0;
+            scalar omega=constant::mathematical::pi*20.0;
+          
+            // Start time
+            const scalar startTime = 0.1;
+    
+            // Retrieve cell centres
+            const vectorField& cellPos = mesh_.C();
+    
+            // Only apply when we have reached the start time
+            if (t > startTime)
+            {
+                // Apply the source
+                forAll(cellPos, i)
+                {
+                         heSource[i] += gamma*p0/(gamma-1)/tStar*(epsilon*sin(omega*(t-startTime))\
+                           *exp(-alpha*(pow(cellPos[i].component(0),2)+pow(cellPos[i].component(1),2))))*V[i];
+                }
+            }
+            Info<< "**codeAddSupRho**" << endl;
+        #};
+
+
+        codeConstrain
+        #{
+            Info<< "**codeSetValue**" << endl;
+        #};
+        code
+        #{
+            $codeCorrect
+            $codeAddSup
+            $codeConstrain
+        #}; 
+    }
+}
+
+acousticDampingSource
+{
+    type            acousticDampingSource;
+    active          yes;//yes;
+ 
+    acousticDampingSourceCoeffs
+    {
+        timeStart        0.004;
+        duration         1000;
+        selectionMode    all;
+        centre           (0 0 0);
+        radius1          102;
+        radius2          153;
+        frequency        10;
+        //w                20;
+        URef             UMean;
+    }
+}

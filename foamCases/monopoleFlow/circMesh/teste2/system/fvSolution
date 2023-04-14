@@ -1,0 +1,99 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    p 
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-015;
+        relTol          1e-6;
+        maxIter         1000;
+    }
+
+    pFinal
+    {   
+        $p;
+        relTol          0;
+    }   
+
+    "(U|k|epsilon|h|e|R)"
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        //nSweeps         2;
+        tolerance       1e-015;
+        relTol          1e-6;
+    }
+
+    "(U|k|epsilon|h|e|R)Final"
+    {
+        $U;
+        relTol          0;
+    }
+
+    "rho.*"
+    {
+        solver          diagonal;
+        tolerance       1e-015;
+        relTol          0;
+    }
+
+    "pcorr.*"
+    {
+        solver          GAMG;
+        tolerance       1e-6;
+        relTol          0;
+        smoother        GaussSeidel;
+        cacheAgglomeration no;
+        nCellsInCoarsestLevel 100;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+        maxIter         50;
+    }
+/*
+    "pcorr.*"
+    {
+        solver          PCG;
+        preconditioner  DIC;
+        tolerance       1e-2;
+        relTol          0;
+    }
+*/
+    "(cellDisplacement|cellDisplacementFinal)"
+    {
+        $pcorr;
+    }
+}
+
+PIMPLE
+{
+    momentumPredictor           true;//false; //true;
+    nCorrectors                 2;
+    nOuterCorrectors            1;
+    nNonOrthogonalCorrectors    3;
+    correctPhi                  true;
+    checkMeshCourantNo          true;
+    transonic                   true;
+
+    rhoMin              0.1;
+    rhoMax              100.0;
+
+}
+
+// ************************************************************************* //

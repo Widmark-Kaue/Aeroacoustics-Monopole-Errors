@@ -1,0 +1,79 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1812                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     1812;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+range     -200.0;
+N         400;
+expansion 1;//1000;
+
+vertices
+(
+    ( $range             -$range                  0.0)    //0
+    ( $range              $range                  0.0)    //1
+    (-$range              $range                  0.0)    //2
+    (-$range             -$range                  0.0)    //3
+    ( $range             -$range                  1.0)    //4
+    ( $range              $range                  1.0)    //5
+    (-$range              $range                  1.0)    //6
+    (-$range             -$range                  1.0)    //7
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) ($N $N 1) 
+    simpleGrading 
+    ( 
+        ( 
+            (0.5 0.5 #calc "1.0/$expansion") // 50% y-dir, 50% cells, expansion = 0.001
+            (0.5 0.5 $expansion  )    // 50% y-dir, 50% cells, expansion = 1000
+        ) 
+        ( 
+            (0.5 0.5 #calc "1.0/$expansion") // 50% x-dir, 50% cells, expansion = 0.001
+            (0.5 0.5 $expansion  )    // 50% x-dir, 50% cells, expansion = 1000 
+        ) 
+        1                  // z-direction expansion ratio 
+    ) 
+//simpleGrading (1 1 1)
+);
+
+boundary
+(
+    frontAndBack 
+    {
+        type empty;
+        faces
+        (
+            (0 1 2 3)
+            (4 5 6 7)
+        );
+    }
+    outer
+    {
+        type patch;
+        faces
+        (
+            (3 2 6 7)
+            (0 1 5 4)
+            (1 2 6 5)
+            (3 0 4 7)
+        );
+    }
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //
