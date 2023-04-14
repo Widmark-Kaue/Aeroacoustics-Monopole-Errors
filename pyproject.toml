@@ -16,6 +16,7 @@ jupyter = "^1.0.0"
 ipykernel = "^6.22.0"
 sympy = "^1.11.1"
 control = "^0.9.3.post2"
+blue = "^0.9.1"
 
 
 [build-system]
