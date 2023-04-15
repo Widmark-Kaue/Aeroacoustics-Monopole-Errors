@@ -24,8 +24,13 @@ source $WM_PROJECT_DIR/bin/tools/RunFunctions
 #cp -ar 0.org 0
 
 #runApplication gmshToFoam cylinderSourceOPT.msh
+#runApplication blockMesh
 #runApplication changeDictionary 
 #runApplication decomposePar
 #runParallel renumberMesh -overwrite
+decomposePar > log.decomposePar
 mpiexec --mca btl ^openib myrhoCentralFoam -parallel
+
+runApplication reconstructPar -latestTime
+postProcess -latestTime -func probes_200ppw > log.postProcess
 
