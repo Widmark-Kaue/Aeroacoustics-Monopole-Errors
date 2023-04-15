@@ -1,0 +1,21 @@
+// ---> Arquivo de Configurações da simulação
+
+// ------------------- 0/ ---------------------------
+
+// U
+AoA             0.0;
+M               0.5;
+soundSpeed      346.527346794;
+
+uFreestream    #calc  "cos(degToRad($AoA))*$M*$soundSpeed";
+vFreestream    #calc  "sin(degToRad($AoA))*$M*$soundSpeed";
+
+// ------------------- constant/ -------------------------
+
+// ------------------- system/ ---------------------------
+
+// fvSchemes
+defaultTimeScheme    backward;
+defaultAdvScheme     vanLeer;
+defaultAdvSchemeV    vanLeerV;
+
