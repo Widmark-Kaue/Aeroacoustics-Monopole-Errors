@@ -1,14 +1,18 @@
 #%% Library
 from pathlib import Path
 #%% Caminhos Importantes do repositório
-path = Path().absolute()
-if not(path.name == 'Aeroacoustics-Resonators'): 
+path      = Path().absolute()
+dir       = 'Aeroacoustics-Resonators' 
+condition = any(i.name == dir for i in path.parents[:])
+
+assert condition, "Diretório não existe"
+
+if not(path.name == dir): 
     for i in range(len(path.parents)):
-        if path.parents[i].name == 'Aeroacoustics-Resonators':
+        if path.parents[i].name == dir:
             path = path.parents[i]
             break
     
-    assert False, "Diretório não existe"
 
 PATH_DATA = path.joinpath('data')
 PATH_PROBES = path.joinpath('observers')
