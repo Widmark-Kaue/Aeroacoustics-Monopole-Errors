@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 from re import sub
 from src.path import *
 from string import ascii_letters
@@ -44,7 +46,6 @@ def probes(
     with open(PATH_PROBES / name_of_archive, 'w') as file:
         file.write(arq)
 
-
 def microphones(
     number_of_observer: int = 30, lim: tuple = (2, 102), lenght: float = 1
 ):
@@ -58,3 +59,24 @@ def microphones(
             file.write('\t\tpRef\t2.0e-5;\n')
             file.write('\t\tfftFreq\t1024;\n\t}\n')
         file.write('}')
+
+def plotSchemes(psim:dict, analitc:Path = None, title:str = '', save:bool = False)-> None:
+    
+    if analitc != None:
+        x, p = loadtxt(analitc, unpack=True)
+        plt.plot(x,p, 'k-.', label = 'analitic solution')
+    for timeScheme in list(psim.keys()):
+        xsim = linspace(-100,100, len(psim[timeScheme]))
+        plt.plot(xsim,psim[timeScheme], label = f'{timeScheme}')
+
+    plt.xlabel(r'$x \ [m]$')
+    plt.ylabel(r'$P \ [Pa]$')
+    plt.title(fr'{title}')
+    plt.legend()
+    plt.grid()
+    
+    if save:
+        aux = sub(r'\s', '_', title)
+        plt.savefig(PATH_IMAGES.joinpath(f'{aux}.png'), format = 'png', dpi = 720)
+    
+    plt.show()

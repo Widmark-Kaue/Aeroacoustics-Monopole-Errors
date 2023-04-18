@@ -13,9 +13,10 @@ if not(path.name == dir):
             path = path.parents[i]
             break
     
-
-PATH_DATA = path.joinpath('data')
+PATH_IMAGES = path.joinpath('images')
+PATH_DATA   = path.joinpath('data')
 PATH_PROBES = path.joinpath('observers')
 
+PATH_IMAGES.mkdir(exist_ok=True)
 PATH_PROBES.mkdir(exist_ok=True)
 PATH_DATA.mkdir(exist_ok=True)
