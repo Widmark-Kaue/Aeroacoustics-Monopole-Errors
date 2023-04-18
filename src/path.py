@@ -1,15 +1,17 @@
 #%% Library
 from pathlib import Path
 #%% Caminhos Importantes do repositório
-if not Path('/workspaces') in Path().cwd().parents:
-    for path in Path.home().glob('**/Aeroacoustics-Resonators'):
-        PATH_PROBES = path.joinpath('observers')
-        PATH_DATA = path.joinpath('data')
-        break
-else:
-    for path in Path.home().parent.with_name('workspaces').glob('Aeroacoustics-Resonators'):
-        PATH_DATA = path.joinpath('data')
-        break
+path = Path().absolute()
+if not(path.name == 'Aeroacoustics-Resonators'): 
+    for i in range(len(path.parents)):
+        if path.parents[i].name == 'Aeroacoustics-Resonators':
+            path = path.parents[i]
+            break
+    
+    assert False, "Diretório não existe"
+
+PATH_DATA = path.joinpath('data')
+PATH_PROBES = path.joinpath('observers')
 
 PATH_PROBES.mkdir(exist_ok=True)
 PATH_DATA.mkdir(exist_ok=True)
