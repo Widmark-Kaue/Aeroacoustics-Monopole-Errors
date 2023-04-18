@@ -23,14 +23,21 @@ source $WM_PROJECT_DIR/bin/tools/RunFunctions
 
 #cp -ar 0.org 0
 
+# --- Gera malha
 #runApplication gmshToFoam cylinderSourceOPT.msh
-#runApplication blockMesh
+#runApplication gmshToFoam teste50ppw.msh
 #runApplication changeDictionary 
+#runApplication blockMesh
+
+#--- Paralelização
 #runApplication decomposePar
 #runParallel renumberMesh -overwrite
 decomposePar > log.decomposePar
+
+#--- Rodar simulação
 mpiexec --mca btl ^openib myrhoCentralFoam -parallel
 
+#--- Pós-processamento
 runApplication reconstructPar -latestTime
 postProcess -latestTime -func probes_200ppw > log.postProcess
 
