@@ -10,6 +10,7 @@ __pycache__/
 *$py.class
 
 # OpenFoam ignore
+*.foam
 *.gz
 log.*
 log[0-9].*
