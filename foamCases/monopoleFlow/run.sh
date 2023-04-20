@@ -2,7 +2,7 @@
 #
 # Script de exemplo para submeter trabalho que não use MPI
 #
-#SBATCH --job-name=teste            # Nome do trabalho a ser executado (para melhor identificação)
+#SBATCH --job-name=NM1            # Nome do trabalho a ser executado (para melhor identificação)
 #SBATCH --partition=open_cpu                  # Em qual fila o trabalho será executado (ver filas disponíveis com o comando sinfo)
 #SBATCH --tasks-per-node=20
 #SBATCH --nodes=1              # Número de nós (computadores) que serão utilizados (1 para códigos openMP)
@@ -26,6 +26,7 @@ source $WM_PROJECT_DIR/bin/tools/RunFunctions
 # --- Gera malha
 #runApplication gmshToFoam cylinderSourceOPT.msh
 #runApplication gmshToFoam teste50ppw.msh
+#runApplication gmshToFoam newMesh1.msh
 #runApplication changeDictionary 
 #runApplication blockMesh
 
@@ -35,7 +36,7 @@ source $WM_PROJECT_DIR/bin/tools/RunFunctions
 decomposePar > log.decomposePar
 
 #--- Rodar simulação
-mpiexec --mca btl ^openib myrhoCentralFoam -parallel
+runParallel myrhoCentralFoam
 
 #--- Pós-processamento
 runApplication reconstructPar -latestTime

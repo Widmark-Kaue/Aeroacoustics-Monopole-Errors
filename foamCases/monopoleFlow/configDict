@@ -7,15 +7,15 @@ AoA             0.0;
 M               0.5;
 soundSpeed      346.527346794;
 
-uFreestream    #calc  "cos(degToRad($AoA))*$M*$soundSpeed";
-vFreestream    #calc  "sin(degToRad($AoA))*$M*$soundSpeed";
+uFreestream    #calc "cos(degToRad($AoA))*$M*$soundSpeed";
+vFreestream    #calc "sin(degToRad($AoA))*$M*$soundSpeed";
 
 // ------------------- constant/ -------------------------
 
 // ------------------- system/ ---------------------------
 
 // fvSchemes
-defaultTimeScheme    backward;
-defaultAdvScheme     vanLeer;
-defaultAdvSchemeV    vanLeerV;
+defaultTimeScheme    backward; // Euler, CranckNicolson 0.9
+defaultAdvScheme     vanLeer;  // upwind, limitedLinear 1, linearUpwind grad(h)
+defaultAdvSchemeV    vanLeerV; // upwind, limitedLinear 1, linearUpwind grad(U)
 
