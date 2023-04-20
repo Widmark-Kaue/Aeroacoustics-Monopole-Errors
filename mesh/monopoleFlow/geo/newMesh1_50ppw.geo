@@ -1,11 +1,18 @@
 SetFactory("OpenCASCADE");
 
 // Parâmetros
-// lambda  = DefineNumber[34.653698762,Name "Parameter/lambda"];
-lambda  = DefineNumber[8.26354085,Name "Parameter/lambda"];
-rinner  = DefineNumber[lambda,Name "Parameters/rinner"];
-rout    = DefineNumber[400,Name "Parameters/rout"];
-cos45   = DefineNumber[0.707106781, Name "Parameters/cos"];
+lambda_min  = DefineNumber[8.26354085,Name "Parameters/lambda min"];
+lambda_dp   = DefineNumber[52,Name "Parameters/lambda doppler"];
+rinner      = DefineNumber[lambda_dp/2,Name "Parameters/rinner"];
+rout        = DefineNumber[400,Name "Parameters/rout"];
+cos45       = DefineNumber[0.707106781, Name "Parameters/cos"];
+
+// Definindo malha
+ppw         = DefineNumber[50, Name "Mesh/ppw"];
+c           = DefineNumber[(2*rinner)/lambda_min * ppw, Name "Mesh/c"];
+a         	= DefineNumber[50, Name "Mesh/a"];
+b         	= DefineNumber[200, Name "Mesh/b"];
+dprog       = DefineNumber[1.02, Name "Mesh/dprog"];
 
 // Pontos quadrado interno
 Point(1) = {-rinner, rinner, 0, 1.0};
@@ -81,10 +88,7 @@ Plane Surface(5) = {5};
 //+
 Recombine Surface {2, 3, 4, 5, 1};
 
-// Definindo malha
-a = 67;
-c = 1.5*a;
-b = 4*a;
+
 
     // quadrado
 Transfinite Curve {1, 2, 3, 4}  = a Using Progression 1;
@@ -102,7 +106,7 @@ Transfinite Curve {1, 5, 11, 6} = c Using Progression 1;
 Transfinite Curve {2, 6, 12, 7} = c Using Progression 1;
 
     //diagonais
-Transfinite Curve {7, 8, 5, 6}  = b Using Progression 1.014;
+Transfinite Curve {7, 8, 5, 6}  = b Using Progression dprog;
 //+
 
 //+
@@ -130,3 +134,4 @@ Physical Surface("frontAndBack", 34) = {17, 1, 5, 20, 2, 22, 3, 14, 4, 10};
 Physical Volume("internal", 35) = {5, 2, 3, 1, 4};
 
 Mesh 3;
+

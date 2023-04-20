@@ -2,6 +2,7 @@
 remote/
 .devcontainer/
 *.lock/
+!spacialTest/2
 
 
 # Byte-compiled / optimized / DLL files
@@ -21,6 +22,7 @@ processor*
 [0-9]*.[0-9]*
 !0.org
 !0.orig
+![0-9].data
 constant/extendedFeatureEdgeMesh
 *.eMesh
 polyMesh/
