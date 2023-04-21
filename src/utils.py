@@ -28,7 +28,7 @@ def probes(
     lim: tuple = (2, 102),
     name_of_archive: str = 'probesTime',
     field: str = 'p',
-):
+)->None:
     p = linspace(lim[0], lim[1], number_of_probes)
 
     arq = open(PATH_PROBES / 'templateProbe.txt', 'r').read()
@@ -47,8 +47,10 @@ def probes(
         file.write(arq)
 
 def microphones(
-    number_of_observer: int = 30, lim: tuple = (2, 102), lenght: float = 1
-):
+    number_of_observer: int = 30, 
+    lim: tuple = (2, 102), 
+    lenght: float = 1
+)-> None:
     m = linspace(lim[0], lim[1], number_of_observer)
     letter = list(ascii_letters)
     with open(PATH_PROBES / 'microphonesTimeS.txt', 'w') as file:
@@ -60,14 +62,21 @@ def microphones(
             file.write('\t\tfftFreq\t1024;\n\t}\n')
         file.write('}')
 
-def plotSchemes(psim:dict, analitc:Path = None, title:str = '', save:bool = False)-> None:
+def plotSchemes(
+        psim:dict, 
+        analitc:Path = None, 
+        xsim:tuple = (-100, 100), 
+        title:str = '', 
+        save:bool = False
+        )-> None:
     
+    line = ['solid', 'dashed', 'dashdot', 'dotted']
     if analitc != None:
         x, p = loadtxt(analitc, unpack=True)
         plt.plot(x,p, 'k-.', label = 'analitic solution')
-    for timeScheme in list(psim.keys()):
-        xsim = linspace(-100,100, len(psim[timeScheme]))
-        plt.plot(xsim,psim[timeScheme], label = f'{timeScheme}')
+    for scheme in psim:
+        xsimV = linspace(xsim[0],xsim[1], len(psim[scheme]))
+        plt.plot(xsimV, psim[scheme], label = f'{scheme}', alpha = 0.75)
 
     plt.xlabel(r'$x \ [m]$')
     plt.ylabel(r'$P \ [Pa]$')
