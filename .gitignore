@@ -2,7 +2,6 @@
 remote/
 .devcontainer/
 *.lock/
-!spacialTest/2
 
 
 # Byte-compiled / optimized / DLL files
