@@ -19,8 +19,10 @@ omega_num = 20 * np.pi
 f         = omega_num / (2 * np.pi)
 lamb0     = c0 / f
 lamb1     = lamb0 * (1 + M * np.cos(theta))
+lamb2     = lamb0 * (1 - M * np.cos(theta))
 print(f'lambda0 = {lamb0} m')
-print(f'lambda1 = {lamb1} ')
+print(f'lambda montante = {lamb1} m')
+print(f'lambda jusante  = {lamb2} m')
 #%% import solução analítica
 x, p = np.loadtxt(
     PATH_DATA.joinpath('monopoleFlow', 'analiticSolution2s.dat'), unpack=True
