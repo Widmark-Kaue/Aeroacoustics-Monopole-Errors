@@ -65,18 +65,23 @@ def microphones(
 def plotSchemes(
         psim:dict, 
         analitc:Path = None, 
-        xsim:tuple = (-100, 100), 
-        title:str = '', 
-        save:bool = False
+        xsim:tuple   = (-100, 100), 
+        title:str    = 'unknow', 
+        save:bool    = False
         )-> None:
     
-    line = ['solid', 'dashed', 'dashdot', 'dotted']
+    line = ['dashed', 'dashdot', 'dotted', 'solid']
     if analitc != None:
         x, p = loadtxt(analitc, unpack=True)
-        plt.plot(x,p, 'k-.', label = 'analitic solution')
-    for scheme in psim:
+        plt.plot(x,p, 'k', label = 'analitic solution')
+    for i, scheme in enumerate(psim):
         xsimV = linspace(xsim[0],xsim[1], len(psim[scheme]))
-        plt.plot(xsimV, psim[scheme], label = f'{scheme}', alpha = 0.75)
+        plt.plot(xsimV,psim[scheme], 
+                 linestyle  = '--',
+                 markersize = 5,
+                 alpha      = 0.75,
+                 label      = f'{scheme}'
+                 ) 
 
     plt.xlabel(r'$x \ [m]$')
     plt.ylabel(r'$P \ [Pa]$')
