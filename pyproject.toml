@@ -19,6 +19,8 @@ ipykernel = "^6.22.0"
 blue = "^0.9.1"
 pandas = "^2.0.0"
 
+[tool.blue]
+include = ["src/utils.py", "src/path.py", "src/builder.py", "scripts/wave_length.py"]
 
 [build-system]
 requires = ["poetry-core"]
