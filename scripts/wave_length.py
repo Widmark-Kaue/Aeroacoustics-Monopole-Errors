@@ -45,6 +45,7 @@ for i in range(len(sign) - 1):
             roots.pop()
 roots = np.array(roots)
 #%% plot com as raizes e comprimentos de onda
+save = True
 lamb = np.diff(roots)
 
 ticks = (roots[:-1] + roots[1:]) / 2
@@ -55,12 +56,17 @@ plt.plot(roots, pf(roots),
     markersize=5,
     label=r'$\lambda_{min}=$' + f'{round(min(lamb),3)} m',
 )
-plt.xticks(np.round(ticks, 2), [f'{round(i,2)}' for i in lamb], rotation=45)
+plt.xticks(np.round(ticks, 2), [f'{round(i,1)}' for i in lamb], rotation=45)
+for root in roots:
+    plt.axvline(root, color = 'gray', linestyle = '--', linewidth = 0.5)
 
+plt.title('Análise do comprimento de onda')
 plt.xlabel(r'$\lambda \ [m]$')
 plt.ylabel(r'$P \ [Pa]$')
 plt.legend()
-plt.grid(axis='y')
+# plt.grid(axis='y')
+if save:
+    plt.savefig(PATH_IMAGES.joinpath('wave_length_analysis.png'), format ='png', dpi = 720)
 plt.show()
 
 
