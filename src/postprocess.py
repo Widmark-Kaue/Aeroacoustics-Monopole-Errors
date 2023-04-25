@@ -4,7 +4,10 @@ from scipy.interpolate import interp1d
 
 
 def rmsSpacial(
-    pxa: tuple, psim: array, xsim: tuple = (-100, 100), windows: int = 1
+    pxa: tuple, 
+    psim: array, 
+    xsim: tuple = (-100, 100), 
+    windows: int = 1
 ) -> tuple:
 
     xa, pa = pxa
