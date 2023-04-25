@@ -4,6 +4,7 @@ remote/
 *.lock
 *.msh
 teste.txt
+images/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
