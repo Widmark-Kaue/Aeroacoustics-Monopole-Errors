@@ -1,8 +1,8 @@
 # my ignore
 remote/
 .devcontainer/
-*.lock/
-
+*.lock
+*.msh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
