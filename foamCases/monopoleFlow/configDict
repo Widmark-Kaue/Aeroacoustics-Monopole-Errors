@@ -18,4 +18,6 @@ vFreestream    #calc "sin(degToRad($AoA))*$M*$soundSpeed";
 defaultTimeScheme    backward; // Euler, CranckNicolson 0.9
 defaultAdvScheme     vanLeer;  // upwind, limitedLinear 1, linearUpwind grad(h)
 defaultAdvSchemeV    vanLeerV; // upwind, limitedLinear 1, linearUpwind grad(U)
+defaultIntScheme     vanLeer;
+defaultIntSchemeV    vanLeerV;
 
