@@ -21,3 +21,6 @@ defaultAdvSchemeV    vanLeerV; // upwind, limitedLinear 1, linearUpwind grad(U)
 defaultIntScheme     vanLeer;
 defaultIntSchemeV    vanLeerV;
 
+//fvOptions
+r1                   252;
+
