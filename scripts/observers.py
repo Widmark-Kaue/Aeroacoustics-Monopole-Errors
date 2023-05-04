@@ -12,4 +12,5 @@ print(f'lambda = {lamb} [m]')
 print(f'ppw = {200/ppw}')
 
 #%% Time probes
-probes(number_of_probes = 22, lim = (-99, 99), name_of_archive = 'probesTime')
+probes(number_of_probes = 23, lim = (-99, 99), name_of_archive = 'probesTime')
+# %%

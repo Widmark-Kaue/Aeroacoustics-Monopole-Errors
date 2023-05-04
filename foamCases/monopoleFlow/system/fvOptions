@@ -14,6 +14,7 @@ FoamFile
     object      fvOptions;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#include "../configDict"
 
 limitT
 {
@@ -102,7 +103,7 @@ acousticDampingSource
         duration         1000;
         selectionMode    all;
         centre           (0 0 0);
-        radius1          102;
+        radius1          $r1;
         radius2          400;
         frequency        10;
         //w                20;
