@@ -11,16 +11,22 @@ def importData(
         time: float = 2,
         simulation: str = 'monopoleFlow' ,
 )-> dict:
-
-    toPa     = 101325 
-    pressure = {}
-
-    PATH_IMPORT = PATH_DATA.joinpath(simulation, case, test, str(time))
-    for arq in PATH_IMPORT.iterdir():
-        p  = loadtxt(arq, comments='#')
-        name = arq.stem.split('_')[-1]
-        pressure.update({name: p[1:] - toPa})
-
+    
+    PATH_IMPORT = PATH_DATA.joinpath(simulation, case, test)
+    pressure    = {}
+    toPa        = 101325    
+    if time != None:
+        for arq in PATH_IMPORT.joinpath(str(time)).iterdir():
+            p  = loadtxt(arq, comments='#')
+            name = arq.stem.split('_')[-1]
+            pressure.update({name: p[1:] - toPa})
+    else:
+        for arq in PATH_IMPORT.glob('*.dat'):
+            tp = loadtxt(arq, comments='#')
+            tp[:,1:] = tp[:,1:] - toPa
+            name = arq.stem.split('_')[-1]
+            pressure.update({name: tp})
+    
     return pressure
 
 def probes(
