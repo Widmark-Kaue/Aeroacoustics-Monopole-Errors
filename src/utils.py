@@ -6,15 +6,15 @@ from string import ascii_letters
 from numpy import loadtxt, linspace
 
 def importData(
-        case: str,
-        test: str,
-        time: float = 2,
-        simulation: str = 'monopoleFlow' ,
+        case       : str,
+        test       : str,
+        time       : float  = 2,
+        simulation : str    = 'monopoleFlow' ,
+        toPa       : float  = 101325
 )-> dict:
     
     PATH_IMPORT = PATH_DATA.joinpath(simulation, case, test)
     pressure    = {}
-    toPa        = 101325    
     if time != None:
         for arq in PATH_IMPORT.joinpath(str(time)).iterdir():
             p  = loadtxt(arq, comments='#')
@@ -31,9 +31,9 @@ def importData(
 
 def probes(
     number_of_probes: int = 30,
-    lim: tuple = (2, 102),
-    name_of_archive: str = 'probesTime',
-    field: str = 'p',
+    lim             : tuple = (2, 102),
+    name_of_archive : str = 'probesTime',
+    field           : str = 'p',
 )->None:
     p = linspace(lim[0], lim[1], number_of_probes)
 
@@ -49,17 +49,17 @@ def probes(
 
     arq = sub('#', write, arq)
 
-    with open(PATH_PROBES / name_of_archive, 'w') as file:
+    with open(PATH_PROBES.joinpath(name_of_archive), 'w') as file:
         file.write(arq)
 
 def microphones(
     number_of_observer: int = 30, 
-    lim: tuple = (2, 102), 
-    lenght: float = 1
+    lim               : tuple = (2, 102), 
+    lenght            : float = 1
 )-> None:
     m = linspace(lim[0], lim[1], number_of_observer)
     letter = list(ascii_letters)
-    with open(PATH_PROBES / 'microphonesTimeS.txt', 'w') as file:
+    with open(PATH_PROBES.joinpath('microphonesTimeS.txt'), 'w') as file:
         file.write('observers\n{\n')
         for k, i in enumerate(m):
             file.write(f'\tR-{letter[k]}\n' + '\t{\n')
@@ -69,12 +69,12 @@ def microphones(
         file.write('}')
 
 def plotSchemes(
-        psim:dict, 
-        analitc:Path = None, 
-        xsim:tuple   = (-100, 100), 
-        title:str    = 'unknow', 
-        save:bool    = False
-        )-> None:
+    psim    :dict, 
+    analitc :Path  = None, 
+    xsim    :tuple = (-100, 100), 
+    title   :str   = 'unknow', 
+    save    :bool  = False
+)-> None:
     
     line = ['dashed', 'dashdot', 'dotted', 'solid']
     if analitc != None:
