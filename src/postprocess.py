@@ -1,5 +1,5 @@
-from numpy import linspace, sqrt, array
 from scipy.integrate import trapz
+from numpy import linspace, sqrt, array, abs
 from scipy.interpolate import interp1d
 
 
@@ -11,9 +11,8 @@ def rmsSpacial(
 ) -> tuple:
 
     xa, pa = pxa
-    psimf = interp1d(
-        linspace(xsim[0], xsim[1], len(psim)), psim, kind='cubic'
-    )(xa)
+    psimf = interp1d(linspace(xsim[0], xsim[1], len(psim)), psim, kind='cubic')
+    psimf = psimf(xa)
 
     rms = []
     window = (xa[-1] - xa[0]) / windows
@@ -29,10 +28,27 @@ def rmsSpacial(
     return tuple(rms)
 
 
-def phaseAmplitude(pta: tuple, psim: array, tsim: tuple) -> tuple:
+def phaseAmplitude(
+    pta: tuple, 
+    sim: array,
+    ttran : float,
+) -> tuple:
 
-    t1, t2 = tsim
     ta, pa = pta
+    ts, ps = sim
+    
+    assert len(ta) ==  len(ts), "Vetores de tempo precisam ter o mesmo tamanho"
+    
+    na = ta.searchsorted(ttran)
+    ns = ts.searhsorted(ttran)
+    
+    parms2 = 1/(ta[-1] - ttran) * trapz(pa[na:]**2, ta[na:])
+    psrms2 = 1/(ts[-1] - ttran) * trapz(ps[ns:]**2, ts[ns:])
+    
+    Aerror = abs(psrms2 - parms2)/parms2
+    
+    return Aerror
+    
 
     """
     1º passo: identificar onde dentro da solução análitica e numérica começa o regime estacionário
