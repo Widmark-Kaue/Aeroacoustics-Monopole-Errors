@@ -39,6 +39,7 @@ decomposePar > log.decomposePar
 runParallel myrhoCentralFoam
 
 #--- Pós-processamento
-runApplication reconstructPar -latestTime
-postProcess -latestTime -func probes_200ppw > log.postProcess
+runApplication reconstructPar
+postProcess -func probesTime > log.postProcessTime
+postProcess -latestTime -func probesSpacial > log.postProcessSpacial
 
