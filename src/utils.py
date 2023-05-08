@@ -10,18 +10,19 @@ def importData(
         test       : str,
         time       : float  = 2,
         simulation : str    = 'monopoleFlow' ,
-        toPa       : float  = 101325
+        toPa       : float  = 101325,
+        keyword    : str    = '.dat'
 )-> dict:
     
     PATH_IMPORT = PATH_DATA.joinpath(simulation, case, test)
     pressure    = {}
     if time != None:
-        for arq in PATH_IMPORT.joinpath(str(time)).iterdir():
+        for arq in PATH_IMPORT.joinpath(str(time)).glob(f'*{keyword}*'):
             p  = loadtxt(arq, comments='#')
             name = arq.stem.split('_')[-1]
             pressure.update({name: p[1:] - toPa})
     else:
-        for arq in PATH_IMPORT.glob('*.dat'):
+        for arq in PATH_IMPORT.glob(f'*{keyword}*'):
             tp = loadtxt(arq, comments='#')
             tp[:,1:] = tp[:,1:] - toPa
             name = arq.stem.split('_')[-1]

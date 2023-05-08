@@ -1,10 +1,10 @@
-probes_200ppw
+probesSpacial
 {
         // Where to load it from
         libs ( "libsampling.so" );
         type            probes;
         // Name of the directory for probe data
-        name            probes_200ppw;
+        name            probesSpacial;
         // Write at same frequency as fields
         writeControl   timeStep;
         writeInterval  1;
