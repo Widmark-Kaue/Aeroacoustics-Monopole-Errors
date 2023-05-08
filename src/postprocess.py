@@ -46,9 +46,6 @@ def phaseAmplitude(
     psrms2 = 1/(ts[-1] - ttran) * trapz(ps[ns:]**2, ts[ns:])
     
     Aerror = abs(psrms2 - parms2)/parms2
-    
-    return Aerror
-    
 
     """
     1º passo: identificar onde dentro da solução análitica e numérica começa o regime estacionário
@@ -57,3 +54,6 @@ def phaseAmplitude(
     4º passo: calcular erro de amplitude
     5º passo: 
     """
+    
+    return Aerror
+    
