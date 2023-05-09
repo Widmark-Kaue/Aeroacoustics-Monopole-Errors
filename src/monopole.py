@@ -1,5 +1,5 @@
 """
-
+Baseado no código do prof. Juan
 """
 import numpy as np
 import sympy as sy
