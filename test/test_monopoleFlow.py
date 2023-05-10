@@ -1,5 +1,5 @@
 #%% code
-from src.monopole import monopoleFlow
+from src.monopole import monopoleFlowSy
 
-monopoleFlow()
+monopoleFlowSy()
 # %%
