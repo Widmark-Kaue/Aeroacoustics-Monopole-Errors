@@ -9,8 +9,8 @@ from scipy.signal import fftconvolve
 from src.path import PATH_DATA, Path
 
 
-def monopoleFlow (
-    t:          list(float) = 2,
+def monopoleFlowSy (
+    t:          float or list = 2,
     xlim:       tuple = (-200, 200),
     ylim:       tuple = (-200, 200),
     nxy:        tuple = (401, 401),
@@ -42,7 +42,7 @@ def monopoleFlow (
     H           = np.zeros(nxy, dtype=float)
     
     # simbolic variables
-    xSy, ySy, tSy, etaSy =  sy.symbols('xSy ySy tSy', real=True)
+    xSy, ySy, tSy =  sy.symbols('xSy ySy tSy', real=True)
     
     ksiSy = omega*sy.sqrt(xSy**2 + (1-M**2)*ySy**2)/(c0*(1-M**2))
     etaSy = -sy.I*M/(1 - M**2)*k*xSy - sy.I*omega*tSy
@@ -84,8 +84,10 @@ def monopoleFlow (
         'ny'        : ny
     }
     
-    
-    t = list(t)
+    try:
+        t = list(t)
+    except:
+        t = [t]
     for tk in t:
         for i, xi in enumerate(x):
             for j, yj in enumerate(y):
@@ -107,7 +109,6 @@ def monopoleFlow (
         outName = f'monopole_M{M}.json'
     with open(save_path.joinpath(outName), 'w') as file:
         dump(DATA, file)
-        
 
     
 
