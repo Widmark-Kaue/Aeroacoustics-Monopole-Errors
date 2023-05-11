@@ -1,8 +1,8 @@
 SetFactory("OpenCASCADE");
 
 // Parâmetros
-// lambda_min  = DefineNumber[8.26354085,  Name "Parameters/lambda min"];
-lambda_min  = DefineNumber[52,          Name "Parameters/lambda min"];
+lambda_min  = DefineNumber[8.26354085,  Name "Parameters/lambda min"];
+//lambda_min  = DefineNumber[52,          Name "Parameters/lambda min"];
 lambda_dp   = DefineNumber[52,          Name "Parameters/lambda doppler"];
 rinner      = DefineNumber[lambda_dp,   Name "Parameters/rinner"];
 rmiddle     = DefineNumber[250,         Name "Parameters/rmiddle"];
@@ -184,3 +184,13 @@ Recombine Surface {1, 5, 2, 3, 4, 9, 6, 7, 8};
 // Mesh 3;//+
 //+
 //+
+//+
+Extrude {0, 0, 1} {
+  Surface{6}; Surface{2}; Surface{1}; Surface{4}; Surface{5}; Surface{9}; Surface{7}; Surface{3}; Surface{8}; Layers{1}; Recombine;
+}
+//+
+Physical Surface("frontAndBack") = {22, 1, 28, 5, 18, 2, 36, 3, 26, 4, 31, 9, 38, 8, 35, 7, 14, 6};
+//+
+Physical Surface("outer") = {30, 37, 34, 12};
+//+
+Physical Volume("internal") = {3, 5, 2, 8, 4, 6, 1, 7, 9};
