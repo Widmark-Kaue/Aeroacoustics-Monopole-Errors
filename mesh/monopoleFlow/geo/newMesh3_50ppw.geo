@@ -1,25 +1,26 @@
 SetFactory("OpenCASCADE");
 
 // Parâmetros
-lambda_min  = DefineNumber[8.26354085,  Name "Parameters/lambda min"];
+// lambda_min  = DefineNumber[8.26354085,  Name "Parameters/lambda min"];
+lambda_min  = DefineNumber[52,          Name "Parameters/lambda min"];
 lambda_dp   = DefineNumber[52,          Name "Parameters/lambda doppler"];
 rinner      = DefineNumber[lambda_dp,   Name "Parameters/rinner"];
-rmiddle     = DefineNumber[lambda_dp*2, Name "Parameters/rmiddle"];
-rout        = DefineNumber[400,         Name "Parameters/rout"];
+rmiddle     = DefineNumber[250,         Name "Parameters/rmiddle"];
+rout        = DefineNumber[500,         Name "Parameters/rout"];
 cos45       = DefineNumber[0.707106781, Name "Parameters/cos"];
 
 // Definindo malha
 ppw         = DefineNumber[50,                          Name "Mesh/ppw"];
-a         	= DefineNumber[15,                          Name "Mesh/a"];
-b         	= DefineNumber[40,                          Name "Mesh/b"];
+a         	= DefineNumber[30,                          Name "Mesh/a"];
+b         	= DefineNumber[(rmiddle-rinner)/lambda_min *ppw,                          Name "Mesh/b"];
 c           = DefineNumber[(2*rinner)/lambda_min * ppw, Name "Mesh/c"];
 d1         	= DefineNumber[c,                           Name "Mesh/d1"];
-d2         	= DefineNumber[40,                          Name "Mesh/d2"];
+d2         	= DefineNumber[60,                          Name "Mesh/d2"];
 aprog       = DefineNumber[1,                           Name "Mesh/aprog"];
-bprog       = DefineNumber[1.085,                       Name "Mesh/bprog"];
+bprog       = DefineNumber[1,                       Name "Mesh/bprog"];
 cprog       = DefineNumber[1,                           Name "Mesh/cprog"];
 d1prog      = DefineNumber[cprog,                       Name "Mesh/d1prog"];
-d2prog      = DefineNumber[1.055,                       Name "Mesh/d2prog"];
+d2prog      = DefineNumber[1.04,                       Name "Mesh/d2prog"];
 
 // Pontos quadrado interno
 Point(1) = {-rinner, rinner, 0, 1.0};
@@ -31,22 +32,22 @@ Point(3) = {rinner, -rinner, 0, 1.0};
 Point(4) = {-rinner, -rinner, 0, 1.0};
 
 // Pontos quadrado médio
-Point(5) = {-rmiddle*cos45,  rmiddle*cos45, 0, 1.0};
+Point(5) = {-rmiddle,  rmiddle, 0, 1.0};
 //+
-Point(6) = {rmiddle*cos45,   rmiddle*cos45, 0, 1.0};
+Point(6) = {rmiddle,   rmiddle, 0, 1.0};
 //+
-Point(7) = {rmiddle*cos45,   -rmiddle*cos45, 0, 1.0};
+Point(7) = {rmiddle,   -rmiddle, 0, 1.0};
 //+
-Point(8) = {-rmiddle*cos45,  -rmiddle*cos45, 0, 1.0};
+Point(8) = {-rmiddle,  -rmiddle, 0, 1.0};
 
 // Pontos quadrado externo
-Point(9) = {-rout*cos45,  rout*cos45, 0, 1.0};
+Point(9) = {-rout,  rout, 0, 1.0};
 //+
-Point(10) = {rout*cos45,   rout*cos45, 0, 1.0};
+Point(10) = {rout,   rout, 0, 1.0};
 //+
-Point(11) = {rout*cos45,   -rout*cos45, 0, 1.0};
+Point(11) = {rout,   -rout, 0, 1.0};
 //+
-Point(12) = {-rout*cos45,  -rout*cos45, 0, 1.0};
+Point(12) = {-rout,  -rout, 0, 1.0};
 
 // Centro arco de circunferência
 Point(13) = {0, 0, 0, 1.0};
@@ -135,7 +136,6 @@ Curve Loop(9) = {10, 20, -11, -16};
 //+
 Plane Surface(9) = {9};
 //+
-Recombine Surface {1, 5, 2, 3, 4, 9, 6, 7, 8};
 
 // quadrado
 Transfinite Curve {1, 2, 3, 4} = a Using Progression aprog;
@@ -166,16 +166,21 @@ Transfinite Surface {6};
 Transfinite Surface {7};
 //+
 Transfinite Surface {8};
+//+
+Recombine Surface {1, 5, 2, 3, 4, 9, 6, 7, 8};
 
-//+
-Extrude {0, 0, 1} {
-  Surface{1}; Surface{5}; Surface{2}; Surface{3}; Surface{4}; Surface{9}; Surface{6}; Surface{7}; Surface{8}; 
-}
-//+
-Physical Surface("frontAndBack", 53) = {14, 18, 5, 1, 21, 2, 24, 3, 26, 4, 30, 9, 33, 6, 36, 7, 38, 8};
-//+
-Physical Surface("outer", 54) = {28, 32, 35, 37};
-//+
-Physical Volume("internal", 55) = {1, 2, 5, 3, 4, 9, 6, 7, 8};
 
-Mesh 3;
+// //+
+// Extrude {0, 0, 1} {
+//   Surface{1}; Surface{5}; Surface{2}; Surface{3}; Surface{4}; Surface{9}; Surface{6}; Surface{7}; Surface{8}; 
+// }
+// //+
+// Physical Surface("frontAndBack", 53) = {14, 18, 5, 1, 21, 2, 24, 3, 26, 4, 30, 9, 33, 6, 36, 7, 38, 8};
+// //+
+// Physical Surface("outer", 54) = {28, 32, 35, 37};
+// //+
+// Physical Volume("internal", 55) = {1, 2, 5, 3, 4, 9, 6, 7, 8};
+
+// Mesh 3;//+
+//+
+//+
