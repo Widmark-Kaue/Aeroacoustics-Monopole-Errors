@@ -13,14 +13,14 @@ cos45       = DefineNumber[0.707106781, Name "Parameters/cos"];
 ppw         = DefineNumber[50,                          Name "Mesh/ppw"];
 a         	= DefineNumber[30,                          Name "Mesh/a"];
 b         	= DefineNumber[100,                         Name "Mesh/b"];
-c           = DefineNumber[50,                          Name "Mesh/c"];
+c           = DefineNumber[100,                          Name "Mesh/c"];
 d1         	= DefineNumber[c,                           Name "Mesh/d1"];
 d2         	= DefineNumber[60,                          Name "Mesh/d2"];
 aprog       = DefineNumber[1,                           Name "Mesh/aprog"];
-bprog       = DefineNumber[0.99,                           Name "Mesh/bprog"];
+bprog       = DefineNumber[1.002,                           Name "Mesh/bprog"];
 cprog       = DefineNumber[1,                           Name "Mesh/cprog"];
 d1prog      = DefineNumber[1,                       Name "Mesh/d1prog"];
-d2prog      = DefineNumber[1.043,                       Name "Mesh/d2prog"];
+d2prog      = DefineNumber[1.025,                       Name "Mesh/d2prog"];
 
 // Pontos quadrado interno
 Point(1) = {-rinner, rinner, 0, 1.0};
