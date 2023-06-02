@@ -10,14 +10,14 @@ rout        = DefineNumber[500,         Name "Parameters/rout"];
 cos45       = DefineNumber[0.707106781, Name "Parameters/cos"];
 
 // Definindo malha
-ppw         = DefineNumber[50,                          Name "Mesh/ppw"];
+ppw         = DefineNumber[16,                          Name "Mesh/ppw"];
 a         	= DefineNumber[30,                          Name "Mesh/a"];
-b         	= DefineNumber[100,                         Name "Mesh/b"];
-c           = DefineNumber[100,                          Name "Mesh/c"];
+b         	= DefineNumber[(rmiddle-rinner)/lambda_min *ppw,                         Name "Mesh/b"];
+c           = DefineNumber[2*rinner/lambda_min *ppw,                          Name "Mesh/c"];
 d1         	= DefineNumber[c,                           Name "Mesh/d1"];
-d2         	= DefineNumber[60,                          Name "Mesh/d2"];
+d2         	= DefineNumber[80,                          Name "Mesh/d2"];
 aprog       = DefineNumber[1,                           Name "Mesh/aprog"];
-bprog       = DefineNumber[1.002,                           Name "Mesh/bprog"];
+bprog       = DefineNumber[1.004,                           Name "Mesh/bprog"];
 cprog       = DefineNumber[1,                           Name "Mesh/cprog"];
 d1prog      = DefineNumber[1,                       Name "Mesh/d1prog"];
 d2prog      = DefineNumber[1.025,                       Name "Mesh/d2prog"];
