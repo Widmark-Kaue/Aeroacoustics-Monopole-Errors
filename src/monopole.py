@@ -89,6 +89,7 @@ def monopoleFlowSy (
     except:
         t = [t]
     for tk in t:
+        print(5*'-'+f' t obs = {tk} '+'-'*5)
         for i, xi in enumerate(x):
             for j, yj in enumerate(y):
                 H[i,j] = Hsy.xreplace(
@@ -107,6 +108,8 @@ def monopoleFlowSy (
     
     if outName == None:
         outName = f'monopole_M{M}.json'
+    
+    save_path.mkdir(exist_ok=True, parents=True)
     with open(save_path.joinpath(outName), 'w') as file:
         dump(DATA, file)
 
