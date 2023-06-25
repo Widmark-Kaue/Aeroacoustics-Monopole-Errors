@@ -3,16 +3,16 @@ SetFactory("OpenCASCADE");
 // Parâmetros
 lambda_min  = DefineNumber[8.26354085,Name "Parameters/lambda min"];
 lambda_dp   = DefineNumber[52,Name "Parameters/lambda doppler"];
-rinner      = DefineNumber[lambda_dp/2,Name "Parameters/rinner"];
+rinner      = DefineNumber[lambda_dp*2,Name "Parameters/rinner"];
 rout        = DefineNumber[400,Name "Parameters/rout"];
 cos45       = DefineNumber[0.707106781, Name "Parameters/cos"];
 
 // Definindo malha
-ppw         = DefineNumber[50, Name "Mesh/ppw"];
+ppw         = DefineNumber[16, Name "Mesh/ppw"];
 c           = DefineNumber[(2*rinner)/lambda_min * ppw, Name "Mesh/c"];
 a         	= DefineNumber[50, Name "Mesh/a"];
-b         	= DefineNumber[200, Name "Mesh/b"];
-dprog       = DefineNumber[1.02, Name "Mesh/dprog"];
+b         	= DefineNumber[100, Name "Mesh/b"];
+dprog       = DefineNumber[1.03, Name "Mesh/dprog"];
 
 // Pontos quadrado interno
 Point(1) = {-rinner, rinner, 0, 1.0};
@@ -121,7 +121,7 @@ Transfinite Surface {5};
 Transfinite Surface {1};
 
 
-// Extrusão da malha no eixo Z
+// // Extrusão da malha no eixo Z
 Extrude {0, 0, 1} {
   Surface{4}; Surface{3}; Surface{1}; Surface{5}; Surface{2}; Layers {1}; Recombine;
 }

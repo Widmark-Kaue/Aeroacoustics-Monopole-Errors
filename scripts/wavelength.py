@@ -70,6 +70,3 @@ plt.legend()
 if save:
     plt.savefig(PATH_IMAGES.joinpath('wave_length_analysis.png'), format ='png', dpi = 720)
 plt.show()
-
-
-# %%
