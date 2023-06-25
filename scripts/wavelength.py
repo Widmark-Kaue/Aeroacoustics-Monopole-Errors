@@ -14,15 +14,17 @@ R     = 8314.46261815324 / 28.9   # Air
 c0    = np.sqrt(gamma * R * T0)
 M     = 0.5
 
-theta     = 0
 omega_num = 20 * np.pi
 f         = omega_num / (2 * np.pi)
 lamb0     = c0 / f
-lamb1     = lamb0 * (1 + M * np.cos(theta))
-lamb2     = lamb0 * (1 - M * np.cos(theta))
+lambd     = lamb0 * (1 + M)
+lambu     = lamb0 * (1 - M)
 print(f'lambda0 = {lamb0} m')
-print(f'lambda montante = {lamb1} m')
-print(f'lambda jusante  = {lamb2} m')
+print(f'lambda montante = {round(lambu,3)} m')
+print(f'lambda jusante  = {round(lambd,3)} m')
+print(f'Raio zona útil = {round(30*lambd)+1} m')
+print(f'Raio zona de saída = {round(60*lambd)+1} m')
+print(f't obs = {round(60*lambd/c0 + 2/f, 2)} s')
 #%% import solução analítica
 x, p = np.loadtxt(
     PATH_DATA.joinpath('monopoleFlow', 'analiticSolution2s.dat'), unpack=True
