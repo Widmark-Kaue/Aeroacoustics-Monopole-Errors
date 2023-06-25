@@ -1,6 +1,3 @@
-"""
-
-"""
 import numpy as np
 import json as js
 import sympy as sy
