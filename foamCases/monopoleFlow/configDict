@@ -1,12 +1,19 @@
 // ---> Arquivo de Configurações da simulação
 
-// ------------------- 0/ ---------------------------
-
-// U
+// ------------ Parâmetros globais ------------------
 AoA             0.0;
 M               0.5;
 soundSpeed      346.527346794;
+freq            10;
 
+ppw             8;
+lambdaU         17;
+lambdaD         52;
+
+
+// ------------------- 0/ ---------------------------
+
+// U
 uFreestream    #calc "cos(degToRad($AoA))*$M*$soundSpeed";
 vFreestream    #calc "sin(degToRad($AoA))*$M*$soundSpeed";
 
@@ -22,5 +29,11 @@ defaultIntScheme     vanLeer;
 defaultIntSchemeV    vanLeerV;
 
 //fvOptions
-r1                   252;
+r1              #calc "int(30*$lambdaD)";
+r2              #calc "int(45*$lambdaD)"
+
+//blockMeshDict
+l               #calc "int(2*60*$lambdaD)";
+r               #calc "float(60*$lambdaD)";
+nPoints         #calc "int(float(l*$ppw)/float($lambdaU))";    
 

@@ -104,8 +104,8 @@ acousticDampingSource
         selectionMode    all;
         centre           (0 0 0);
         radius1          $r1;
-        radius2          400;
-        frequency        10;
+        radius2          $r2;
+        frequency        $freq;
         //w                20;
         URef             UMean;
     }
