@@ -3,8 +3,8 @@ SetFactory("OpenCASCADE");
 // Parâmetros
 lambda_min  = DefineNumber[8.26354085,Name "Parameters/lambda min"];
 lambda_dp   = DefineNumber[52,Name "Parameters/lambda doppler"];
-rinner      = DefineNumber[lambda_dp/2,Name "Parameters/rinner"];
-rout        = DefineNumber[400,Name "Parameters/rout"];
+rinner      = DefineNumber[1560,Name "Parameters/rinner"];
+rout        = DefineNumber[2*1560,Name "Parameters/rout"];
 cos45       = DefineNumber[0.707106781, Name "Parameters/cos"];
 
 // Definindo malha
@@ -90,48 +90,48 @@ Recombine Surface {2, 3, 4, 5, 1};
 
 
 
-    // quadrado
-Transfinite Curve {1, 2, 3, 4}  = a Using Progression 1;
+//     // quadrado
+// Transfinite Curve {1, 2, 3, 4}  = a Using Progression 1;
     
-    //1º quarto de círculo
-Transfinite Curve {9, 8, 3, 7}  = c Using Progression 1;
+//     //1º quarto de círculo
+// Transfinite Curve {9, 8, 3, 7}  = c Using Progression 1;
     
-    //2º quarto de círculo
-Transfinite Curve {10, 5, 4, 8} = c Using Progression 1;
+//     //2º quarto de círculo
+// Transfinite Curve {10, 5, 4, 8} = c Using Progression 1;
 
-    //3º quarto de círculo
-Transfinite Curve {1, 5, 11, 6} = c Using Progression 1;
+//     //3º quarto de círculo
+// Transfinite Curve {1, 5, 11, 6} = c Using Progression 1;
 
-    //4º quarto de círculo
-Transfinite Curve {2, 6, 12, 7} = c Using Progression 1;
+//     //4º quarto de círculo
+// Transfinite Curve {2, 6, 12, 7} = c Using Progression 1;
 
-    //diagonais
-Transfinite Curve {7, 8, 5, 6}  = b Using Progression dprog;
-//+
-
-//+
-Transfinite Surface {2};
-//+
-Transfinite Surface {3};
-//+
-Transfinite Surface {4};
-//+
-Transfinite Surface {5};
-//+
-Transfinite Surface {1};
-
-
-// // Extrusão da malha no eixo Z
-// Extrude {0, 0, 1} {
-//   Surface{4}; Surface{3}; Surface{1}; Surface{5}; Surface{2}; Layers {1}; Recombine;
-// }
-// // Definindo superfícies de contorno
-// Physical Surface("outer", 33) = {18, 21, 6, 12};
+//     //diagonais
+// Transfinite Curve {7, 8, 5, 6}  = b Using Progression dprog;
 // //+
-// //+
-// Physical Surface("frontAndBack", 34) = {17, 1, 5, 20, 2, 22, 3, 14, 4, 10};
-// //+
-// Physical Volume("internal", 35) = {5, 2, 3, 1, 4};
 
-Mesh 2;
+// //+
+// Transfinite Surface {2};
+// //+
+// Transfinite Surface {3};
+// //+
+// Transfinite Surface {4};
+// //+
+// Transfinite Surface {5};
+// //+
+// Transfinite Surface {1};
+
+
+// // // Extrusão da malha no eixo Z
+// // Extrude {0, 0, 1} {
+// //   Surface{4}; Surface{3}; Surface{1}; Surface{5}; Surface{2}; Layers {1}; Recombine;
+// // }
+// // // Definindo superfícies de contorno
+// // Physical Surface("outer", 33) = {18, 21, 6, 12};
+// // //+
+// // //+
+// // Physical Surface("frontAndBack", 34) = {17, 1, 5, 20, 2, 22, 3, 14, 4, 10};
+// // //+
+// // Physical Volume("internal", 35) = {5, 2, 3, 1, 4};
+
+// Mesh 2;
 
