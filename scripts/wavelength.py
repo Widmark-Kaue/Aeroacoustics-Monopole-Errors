@@ -22,8 +22,8 @@ lambu     = lamb0 * (1 - M)
 print(f'lambda0 = {lamb0} m')
 print(f'lambda montante = {round(lambu,3)} m')
 print(f'lambda jusante  = {round(lambd,3)} m')
-print(f'Raio zona útil = {round(30*lambd)+1} m')
-print(f'Raio zona de saída = {round(60*lambd)+1} m')
+print(f'Raio zona útil = {round(30*lambd)} m')
+print(f'Raio zona de saída = {round(60*lambd)} m')
 print(f't obs = {round(60*lambd/c0 + 2/f, 2)} s')
 #%% import solução analítica
 x, p = np.loadtxt(
