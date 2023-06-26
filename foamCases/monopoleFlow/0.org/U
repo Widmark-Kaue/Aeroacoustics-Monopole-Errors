@@ -37,11 +37,11 @@ boundaryField
 //    "(top|bottom|left|right)" 
     outer 
     {
-
+/*
         type            freestreamVelocity;
         freestreamValue $internalField;
         value           $internalField;
-/*
+*/
         type            waveTransmissive;
         field           U;
         phi             phi;
@@ -49,7 +49,6 @@ boundaryField
         psi             thermo:psi;
         gamma           1.4;
         value           $internalField;
-*/
     }
 }
 
