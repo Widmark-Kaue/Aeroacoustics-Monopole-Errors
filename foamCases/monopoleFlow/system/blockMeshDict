@@ -13,10 +13,9 @@ FoamFile
     object      blockMeshDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-include "../configDict"
+#include "../configDict"
 
-range     -$r;
-N         $nPoints;
+
 expansion 1;//1000;
 
 vertices

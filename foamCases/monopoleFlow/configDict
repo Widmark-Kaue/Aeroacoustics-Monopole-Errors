@@ -4,12 +4,11 @@
 AoA             0.0;
 M               0.5;
 soundSpeed      346.527346794;
-freq            10;
+freq            10.0;
 
 ppw             8;
 lambdaU         17;
 lambdaD         52;
-
 
 // ------------------- 0/ ---------------------------
 
@@ -29,11 +28,10 @@ defaultIntScheme     vanLeer;
 defaultIntSchemeV    vanLeerV;
 
 //fvOptions
-r1              #calc "int(30*$lambdaD)";
-r2              #calc "int(45*$lambdaD)"
+r1              #calc "30*$lambdaD";
+r2              #calc "45*$lambdaD";
 
 //blockMeshDict
-l               #calc "int(2*60*$lambdaD)";
-r               #calc "float(60*$lambdaD)";
-nPoints         #calc "int(float(l*$ppw)/float($lambdaU))";    
-
+l               #calc "120*$lambdaD";
+range           #calc "float(-60*$lambdaD)";
+N               2936;// nPoints 8 PPW //#calc "int(float($l) / $lambdaU * $ppw )";
