@@ -5,6 +5,7 @@ remote/
 *.msh
 teste.txt
 images/
+msh/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
