@@ -18,6 +18,7 @@ jupyter = "^1.0.0"
 ipykernel = "^6.22.0"
 blue = "^0.9.1"
 pandas = "^2.0.0"
+plotly = "^5.16.1"
 
 [tool.blue]
 include = ["src/utils.py", "src/path.py", "src/builder.py", "scripts/wave_length.py"]

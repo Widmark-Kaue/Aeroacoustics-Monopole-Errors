@@ -1,7 +1,7 @@
 # my ignore
 remote/
 .devcontainer/
-*.lock
+poetry.lock
 *.msh
 teste.txt
 images/
