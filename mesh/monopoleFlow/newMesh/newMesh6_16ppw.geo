@@ -195,4 +195,4 @@ Physical Surface("outer") = {30, 37, 34, 12};
 //+
 Physical Volume("internal") = {3, 5, 2, 8, 4, 6, 1, 7, 9};
 //+
-Mesh 3;
+Mesh 2;

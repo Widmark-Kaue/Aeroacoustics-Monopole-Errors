@@ -3,16 +3,16 @@ SetFactory("OpenCASCADE");
 // Parâmetros
 lambdaU  = DefineNumber[17,             Name "Parameters/lambda min"];
 lambdaD  = DefineNumber[52,             Name "Parameters/lambda doppler"];
-rinner   = DefineNumber[30*lambdaD,     Name "Parameters/rinner"];
-rout     = DefineNumber[60*lambdaD,     Name "Parameters/rout"];
+rinner   = DefineNumber[2*lambdaD,     Name "Parameters/rinner"];
+rout     = DefineNumber[10*lambdaD,     Name "Parameters/rout"];
 cos45    = DefineNumber[0.707106781,    Name "Parameters/cos"];
 
 // Definindo malha
 ppw         = DefineNumber[8,                           Name "Mesh/ppw"];
-c           = DefineNumber[(rinner)/lambdaU * ppw,    Name "Mesh/c"];
+c           = DefineNumber[(rinner)/lambdaU * ppw,      Name "Mesh/c"];
 a         	= DefineNumber[50,                          Name "Mesh/a"];
 b         	= DefineNumber[30,                          Name "Mesh/b"];
-dprog       = DefineNumber[1.15,                        Name "Mesh/dprog"];
+dprog       = DefineNumber[1.075,                        Name "Mesh/dprog"];
 
 // Pontos quadrado interno
 Point(1) = {-rinner, rinner, 0, 1.0};
@@ -119,17 +119,17 @@ Transfinite Surface {5};
 Transfinite Surface {1};
 
 
-// // Extrusão da malha no eixo Z
-// Extrude {0, 0, 1} {
-//   Surface{4}; Surface{3}; Surface{1}; Surface{5}; Surface{2}; Layers {1}; Recombine;
-// }
-// // Definindo superfícies de contorno
-// Physical Surface("outer", 33) = {18, 21, 6, 12};
-// //+
-// //+
-// Physical Surface("frontAndBack", 34) = {17, 1, 5, 20, 2, 22, 3, 14, 4, 10};
-// //+
-// Physical Volume("internal", 35) = {5, 2, 3, 1, 4};
+// Extrusão da malha no eixo Z
+Extrude {0, 0, 1} {
+  Surface{4}; Surface{3}; Surface{1}; Surface{5}; Surface{2}; Layers {1}; Recombine;
+}
+// Definindo superfícies de contorno
+Physical Surface("outer", 33) = {18, 21, 6, 12};
+//+
+//+
+Physical Surface("frontAndBack", 34) = {17, 1, 5, 20, 2, 22, 3, 14, 4, 10};
+//+
+Physical Volume("internal", 35) = {5, 2, 3, 1, 4};
 
-Mesh 2;
+Mesh 3;
 

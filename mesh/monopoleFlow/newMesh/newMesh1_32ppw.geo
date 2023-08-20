@@ -1,18 +1,18 @@
 SetFactory("OpenCASCADE");
 
 // Parâmetros
-lambda_min  = DefineNumber[8.26354085,Name "Parameters/lambda min"];
-lambda_dp   = DefineNumber[52,Name "Parameters/lambda doppler"];
-rinner      = DefineNumber[lambda_dp*2,Name "Parameters/rinner"];
-rout        = DefineNumber[10*lambda_dp,Name "Parameters/rout"];
-cos45       = DefineNumber[0.707106781, Name "Parameters/cos"];
+lambdaU  = DefineNumber[17,             Name "Parameters/lambda min"];
+lambdaD  = DefineNumber[52,             Name "Parameters/lambda doppler"];
+rinner   = DefineNumber[2*lambdaD,     Name "Parameters/rinner"];
+rout     = DefineNumber[10*lambdaD,     Name "Parameters/rout"];
+cos45    = DefineNumber[0.707106781,    Name "Parameters/cos"];
 
 // Definindo malha
-ppw         = DefineNumber[16, Name "Mesh/ppw"];
-c           = DefineNumber[(2*rinner)/lambda_min * ppw, Name "Mesh/c"];
-a         	= DefineNumber[50, Name "Mesh/a"];
-b         	= DefineNumber[100, Name "Mesh/b"];
-dprog       = DefineNumber[1.03, Name "Mesh/dprog"];
+ppw         = DefineNumber[32,                           Name "Mesh/ppw"];
+c           = DefineNumber[(rinner)/lambdaU * ppw,      Name "Mesh/c"];
+a         	= DefineNumber[50,                          Name "Mesh/a"];
+b         	= DefineNumber[30,                          Name "Mesh/b"];
+dprog       = DefineNumber[1.155,                        Name "Mesh/dprog"];
 
 // Pontos quadrado interno
 Point(1) = {-rinner, rinner, 0, 1.0};
@@ -88,8 +88,6 @@ Plane Surface(5) = {5};
 //+
 Recombine Surface {2, 3, 4, 5, 1};
 
-
-
     // quadrado
 Transfinite Curve {1, 2, 3, 4}  = a Using Progression 1;
     
@@ -121,7 +119,7 @@ Transfinite Surface {5};
 Transfinite Surface {1};
 
 
-// // Extrusão da malha no eixo Z
+// Extrusão da malha no eixo Z
 Extrude {0, 0, 1} {
   Surface{4}; Surface{3}; Surface{1}; Surface{5}; Surface{2}; Layers {1}; Recombine;
 }
@@ -133,5 +131,4 @@ Physical Surface("frontAndBack", 34) = {17, 1, 5, 20, 2, 22, 3, 14, 4, 10};
 //+
 Physical Volume("internal", 35) = {5, 2, 3, 1, 4};
 
-// Mesh 3;
-
+Mesh 3;
