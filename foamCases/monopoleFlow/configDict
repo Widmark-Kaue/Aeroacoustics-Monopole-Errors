@@ -29,9 +29,10 @@ defaultIntSchemeV    vanLeerV;
 
 //fvOptions
 r1              #calc "2*$lambdaD";
-r2              #calc "3.5*$lambdaD"; //3.5 -> quadMesh  //4.5 -> newMesh
+r2              #calc "4.5*$lambdaD"; //3.5 -> quadMesh  //4.5 -> newMesh
 
 //blockMeshDict
 l               #calc "8*$lambdaD";
 range           #calc "float(-4*$lambdaD)";
 N               196;// nPoints 8 PPW //#calc "int(float($l) / $lambdaU * $ppw )";
+// N precisa ser par

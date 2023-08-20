@@ -4,9 +4,8 @@
 #
 #SBATCH --job-name=nomeDoTrabalho          # Nome do trabalho a ser executado (para melhor identificação)
 #SBATCH --partition=open_cpu             # Em qual fila o trabalho será executado (ver filas disponíveis com o comando sinfo)
+#SBATCH --tasks-per-node=20                  # Número de cores que será utilizado
 #SBATCH --nodes 1                          # Número de nós (computadores) que serão utilizados (1 para códigos openMP)
-#SBATCH --cpus-per-task=20                  # Número de cores que será utilizado
-#SBATCH --mem 1000                         # Quanto de memória em MB por nó (computador) o programa necessitará. 
 #SBATCH --time=30:00:00                    # Tempo máximo de simulação (D-HH:MM). 
 #SBATCH -o slurm.%N.%j.out                 # Nome do arquivo onde a saída (stdout) será gravada %N = Máquina , %j = Número do trabalho. 
 #SBATCH -e slurm.%N.%j.err                 # Nome do arquivo para qual a saída de erros  (stderr) será redirecionada.
@@ -32,14 +31,13 @@ source $WM_PROJECT_DIR/bin/tools/RunFunctions
 # --- Gera malha
 #runApplication gmshToFoam cylinderSourceOPT.msh
 #runApplication gmshToFoam teste50ppw.msh
-#runApplication gmshToFoam newMesh1.msh
-#runApplication changeDictionary 
+runApplication gmshToFoam newMesh1.msh
+runApplication changeDictionary 
 #runApplication blockMesh
 
 #--- Paralelização
-#runApplication decomposePar
+runApplication decomposePar
 #runParallel renumberMesh -overwrite
-decomposePar > log.decomposePar
 
 #--- Rodar simulação
 runParallel $(getApplication)
