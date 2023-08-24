@@ -9,10 +9,10 @@ cos45    = DefineNumber[0.707106781,    Name "Parameters/cos"];
 
 // Definindo malha
 ppw         = DefineNumber[16,                           Name "Mesh/ppw"];
-c           = DefineNumber[(rinner)/lambdaU * ppw,      Name "Mesh/c"];
+c           = DefineNumber[(2*rinner)/lambdaU * ppw,      Name "Mesh/c"];
 a         	= DefineNumber[50,                          Name "Mesh/a"];
-b         	= DefineNumber[30,                          Name "Mesh/b"];
-dprog       = DefineNumber[1.115,                        Name "Mesh/dprog"];
+b         	= DefineNumber[100,                          Name "Mesh/b"];
+dprog       = DefineNumber[1.024,                        Name "Mesh/dprog"];
 
 // Pontos quadrado interno
 Point(1) = {-rinner, rinner, 0, 1.0};
