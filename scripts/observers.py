@@ -17,13 +17,13 @@ lambd     = round(lamb0 * (1 + M))
 lambu     = round(lamb0 * (1 - M))
 
 freqSample = lambu/3
-nPoints    = round(60*lambd *32/freqSample)   
+nPoints    = round(10*lambd *32/freqSample)   
 
 #%% Spacial probes and Time probes
-probes(number_of_probes=nPoints, lim = (-30*lambd,30*lambd), name_of_archive='probesSpacial')
-probes(number_of_probes = 22, lim = (-30*lambd, 30*lambd), name_of_archive = 'probesTime')
+probes(number_of_probes=nPoints, lim = (-2*lambd,2*lambd), name_of_archive='probesSpacial')
+probes(number_of_probes = 22, lim = (-2*lambd, 2*lambd), name_of_archive = 'probesTime')
 
-x = np.linspace(-30*lambd, 30*lambd, 22)/lambd
+x = np.linspace(-2*lambd, 2*lambd, 22)/lambd
 print(np.round(x))
 
 # %%
