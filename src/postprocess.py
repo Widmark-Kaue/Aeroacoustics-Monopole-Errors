@@ -6,7 +6,7 @@ from scipy.interpolate import interp1d
 def rmsSpacial(
     pxa: tuple, 
     psim: array, 
-    xsim: tuple = (-100, 100), 
+    xsim: tuple = (-104, 104), 
     windows: int = 1
 ) -> tuple:
 
