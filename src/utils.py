@@ -1,9 +1,11 @@
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 
 from re import sub
 from src.path import *
 from string import ascii_letters
-from numpy import loadtxt, linspace
+from src.postprocess import rmsSpacial
+from numpy import loadtxt, linspace, round
 
 def importData(
         case       : str,
@@ -11,22 +13,21 @@ def importData(
         time       : float  = 2,
         simulation : str    = 'monopoleFlow' ,
         toPa       : float  = 101325,
-        keyword    : str    = '.dat'
+        keyword    : str    = None,
+        oldfile    : bool   = False
 )-> dict:
     
     PATH_IMPORT = PATH_DATA.joinpath(simulation, case, test)
     pressure    = {}
-    if time != None:
-        for arq in PATH_IMPORT.joinpath(str(time)).glob(f'*{keyword}*'):
-            p  = loadtxt(arq, comments='#')
-            name = arq.stem.split('_')[-1]
-            pressure.update({name: p[1:] - toPa})
+    if keyword != None:
+        arqList = PATH_IMPORT.joinpath(str(time)).glob(f'*{keyword}*')
     else:
-        for arq in PATH_IMPORT.glob(f'*{keyword}*'):
-            tp = loadtxt(arq, comments='#')
-            tp[:,1:] = tp[:,1:] - toPa
-            name = arq.stem.split('_')[-1]
-            pressure.update({name: tp})
+        arqList = PATH_IMPORT.joinpath(str(time)).iterdir()
+    
+    for arq in arqList:
+        p  = loadtxt(arq, comments='#')
+        name = sub('_',' ', arq.stem)
+        pressure.update({name: p[1:] - toPa})
     
     return pressure
 
@@ -101,3 +102,83 @@ def plotSchemes(
         plt.savefig(PATH_IMAGES.joinpath(f'{aux}.png'), format = 'png', dpi = 720)
     
     plt.show()
+    
+def plotSchemesGO(
+        psim     :dict,
+        analitc  :Path = None,
+        xsim     :tuple =( -104 , 104 ),
+        title    :str = 'unknow',
+        legend   :int = 1,
+        windows  :bool = False,
+        save     :bool = False
+        )-> None:
+
+        assert 0<=legend<=3, "Error: legend could be between 0 and 3"
+        
+        #figure layout
+        layout = go.Layout(
+            autosize=False,
+            width=1000,
+            height=500,
+            margin=dict(l=10, r = 10, t = 25, b = 20),
+        )
+        
+        # init object
+        fig = go.Figure(layout_xaxis_range = xsim, layout=layout)
+        ndata = 2
+        
+        if analitc !=None:
+            x, p = loadtxt(analitc, unpack=True)
+            fig.add_trace(
+                 go.Scatter(
+                     visible=True,
+                     line = dict(width = 3, color = 'black'),
+                     name='Analitic Solution',
+                     x = x,
+                     y = p
+                 )
+             )
+            if windows: 
+                win = 3
+                window = (x[-1]- x[0])/win
+                pos = 0
+                ticks = [x[0]]
+                for i in range(win):
+                    begin = pos
+                    pos   = x.searchsorted(x[0] + (i+1)*window)
+                    end   = pos 
+                    ticks.append(x[end])
+                
+                fig.update_xaxes(tickvals = round(ticks,1), showgrid = True, gridcolor = 'gray')
+        
+        
+             
+        # simulation
+        for scheme in psim:
+            name = " ".join(scheme.split(' ')[:legend]) 
+            addlabel = ''
+            if windows:
+                 rms =  rmsSpacial((x,p), psim[scheme], xsim = xsim,windows=win)
+                 for i in range(len(rms)):
+                     addlabel += f'win {i+1} = {round(rms[i]*100,2)} % '
+            xsimV = linspace(xsim[0], xsim[1], len(psim[scheme]))
+            fig.add_trace(
+                go.Scatter(
+                    mode= 'lines',
+                    visible=True,
+                    line=dict(width = 3, backoff = 0.5, dash = 'dashdot'),
+                    name = name,
+                    hovertext=addlabel,
+                    x = xsimV,
+                    y = psim[scheme]
+                )
+            )
+            
+        fig.update_layout(title = dict(text = title, font = dict(color = 'black', family = 'Arial'), x = 0.5),
+                          xaxis_title = 'x [m]',
+                          yaxis_title = 'P [Pa]')
+        
+        fig.show()
+
+        if save:
+            fig.write_html(PATH_IMAGES.joinpath(f'{title}.html'))
