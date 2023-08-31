@@ -26,4 +26,8 @@ probes(number_of_probes = 22, lim = (-2*lambd, 2*lambd), name_of_archive = 'prob
 x = np.linspace(-2*lambd, 2*lambd, 22)/lambd
 print(np.round(x))
 
+# %% damping zone
+probes(number_of_probes=nPoints, lim = (-5*lambd,5*lambd), name_of_archive='probesSpacialDampingZone')
+
+
 # %%
