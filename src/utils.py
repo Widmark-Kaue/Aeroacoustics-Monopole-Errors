@@ -10,6 +10,7 @@ from numpy import loadtxt, linspace, round
 def importData(
         case       : str,
         test       : str,
+        subtest    : str    = '',
         time       : float  = 2,
         simulation : str    = 'monopoleFlow' ,
         toPa       : float  = 101325,
@@ -18,11 +19,12 @@ def importData(
 )-> dict:
     
     PATH_IMPORT = PATH_DATA.joinpath(simulation, case, test)
+    
     pressure    = {}
     if keyword != None:
-        arqList = PATH_IMPORT.joinpath(str(time)).glob(f'*{keyword}*')
+        arqList = PATH_IMPORT.joinpath(str(time), subtest).glob(f'*{keyword}*')
     else:
-        arqList = PATH_IMPORT.joinpath(str(time)).iterdir()
+        arqList = PATH_IMPORT.joinpath(str(time), subtest).iterdir()
     
     for arq in arqList:
         p  = loadtxt(arq, comments='#')
