@@ -52,22 +52,25 @@ def monopoleFlowSy (
     GSy  *= sy.hankel1(0, ksiSy) 
     GSy  *= sy.exp(etaSy)
     
-    hankel01Sy = sy.hankel1(0, ksiSy)
-    hankel11Sy = sy.hankel1(1, ksiSy)
+    dGdxSy = sy.diff(GSy, xSy)
+    dGdtSy = sy.diff(GSy, tSy)
     
-    dGdxSy     = omega / (4*c0**3 *(1 - M**2)**(3/2))
-    dGdxSy    *= (M * hankel01Sy - sy.I * xSy *hankel11Sy/sy.sqrt(xSy**2 + (1 - M**2)*ySy**2))
-    dGdxSy    *= sy.exp(etaSy)
+    # hankel01Sy = sy.hankel1(0, ksiSy)
+    # hankel11Sy = sy.hankel1(1, ksiSy)
     
-    dGdtSy     = GSy *(-sy.I*omega)
+    # dGdxSy     = omega / (4*c0**3 *(1 - M**2)**(3/2))
+    # dGdxSy    *= (M * hankel01Sy - sy.I * xSy *hankel11Sy/sy.sqrt(xSy**2 + (1 - M**2)*ySy**2))
+    # dGdxSy    *= sy.exp(etaSy)
+    
+    # dGdtSy     = GSy *(-sy.I*omega)
     
     Hsy        = sy.im(dGdtSy + M * c0*dGdxSy)
     
     # create dict
     [X,Y] = np.meshgrid(x,y)
     DATA = {
-        'X'         : X,
-        'Y'         : Y,
+        'X'         : X.tolist(),
+        'Y'         : Y.tolist(),
         'freq'      : freq,
         'M'         : M,
         'c0'        : c0,
@@ -102,9 +105,10 @@ def monopoleFlowSy (
 
                 # Gaussian distribution of amplitude
                 f[i, j] = epsilon * np.exp(-alpha * (xi**2 + yj**2))
-        
+            if xi%10 == 0:
+                print(f' - X = {xi} - Complete')
         pFlow = fftconvolve(f, H, 'same')*deltax*deltay
-        DATA.update({tk: pFlow})
+        DATA.update({f'{tk}': pFlow.tolist()})
     
     if outName == None:
         outName = f'monopole_M{M}.json'
