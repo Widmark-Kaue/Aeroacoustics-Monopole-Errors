@@ -1,4 +1,4 @@
-#%% solução analítica para 2 e 3
+#%% solução analítica para 2
 from src.monopole import monopoleFlowSy, PATH_DATA
 
 #%%
@@ -9,7 +9,3 @@ monopoleFlowSy(
     nxy         = (2*260+1, 2*260+1),
     save_path   = PATH_DATA.joinpath('monopoleFlow', 'analytical'))
 
-
-
-
-# %%
