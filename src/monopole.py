@@ -4,7 +4,7 @@ Baseado no código do prof. Juan
 import numpy as np
 import sympy as sy
 
-from json import dump
+from json import dump, load
 from scipy.signal import fftconvolve
 from src.path import PATH_DATA, Path
 
@@ -20,7 +20,7 @@ def monopoleFlowSy (
     gamma:      float = 1.4,
     PTR:        tuple = (101325, 298.15, 8314.46261815324 / 28.9),
     save_path:  Path  = PATH_DATA,
-    outName:    str(None)  = None
+    outName:    str   = None
 )->None:
     assert 0 <= M <= 1, 'mach number must be between 0 and 1'
     
@@ -110,13 +110,22 @@ def monopoleFlowSy (
         pFlow = fftconvolve(f, H, 'same')*deltax*deltay
         DATA.update({f'{tk}': pFlow.tolist()})
     
+    # Save data
     if outName == None:
         outName = f'monopole_M{M}.json'
-    
     save_path.mkdir(exist_ok=True, parents=True)
-    with open(save_path.joinpath(outName), 'w') as file:
-        dump(DATA, file)
-
+    
+    save_file = save_path.joinpath(outName) 
+    if not save_file.exists():
+        with open(save_file, 'w') as file:
+            dump(DATA, file)
+    else:
+        with open(save_file, 'r') as file:
+            data_save = load(file)
+        
+        
+        
+        
     
 
     
