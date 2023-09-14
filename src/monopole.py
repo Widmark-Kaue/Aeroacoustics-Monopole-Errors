@@ -10,20 +10,31 @@ from src.path import PATH_DATA, Path
 
 
 def monopoleFlowSy (
-    t:          float or list = 2,
-    xlim:       tuple = (-200, 200),
-    ylim:       tuple = (-200, 200),
-    nxy:        tuple = (401, 401),
-    alpha:      float = np.log(2) / 9,
-    freq:       float = 10,
-    M:          float = 0.5,
-    gamma:      float = 1.4,
-    PTR:        tuple = (101325, 298.15, 8314.46261815324 / 28.9),
-    save_path:  Path  = PATH_DATA,
-    outName:    str   = None
+    t:              float or list = 2,
+    xlim:           tuple = (-200, 200),
+    ylim:           tuple = (-200, 200),
+    nxy:            tuple = (401, 401),
+    alpha:          float = np.log(2) / 9,
+    freq:           float = 10,
+    M:              float = 0.5,
+    gamma:          float = 1.4,
+    PTR:            tuple = (101325, 298.15, 8314.46261815324 / 28.9),
+    writeInterval:  float = 1,
+    printInterval:  float = 10,
+    savePath:       Path  = PATH_DATA,
+    outName:        str   = None
 )->None:
     assert 0 <= M <= 1, 'mach number must be between 0 and 1'
     
+    # Save configurations
+    savePath.mkdir(exist_ok=True, parents=True)
+    
+    if outName == None:
+        outName = f'monopole_M{M}.json'
+    elif outName.split('.')[-1] != 'json':
+        outName = f'{outName}.json'
+        
+    filePath = savePath.joinpath(outName) 
     
     # variables
     P0, T0, R   = PTR
@@ -84,9 +95,14 @@ def monopoleFlowSy (
         'xlim'      : xlim,
         'ylim'      : ylim,
         'nx'        : nx,
-        'ny'        : ny
+        'ny'        : ny,
+        'time'      : {}
     }
+    with open(filePath, 'w') as file:
+        dump(DATA, file)
     
+    # Time iterarion
+    time = {}
     try:
         t = list(t)
     except:
@@ -105,23 +121,21 @@ def monopoleFlowSy (
 
                 # Gaussian distribution of amplitude
                 f[i, j] = epsilon * np.exp(-alpha * (xi**2 + yj**2))
-            if xi%10 == 0:
+            if xi%printInterval == 0:
                 print(f' - X = {xi} - Complete')
+        
+        #Field resolution
         pFlow = fftconvolve(f, H, 'same')*deltax*deltay
-        DATA.update({f'{tk}': pFlow.tolist()})
+        time.update({f'{tk}': pFlow.tolist()})
     
-    # Save data
-    if outName == None:
-        outName = f'monopole_M{M}.json'
-    save_path.mkdir(exist_ok=True, parents=True)
-    
-    save_file = save_path.joinpath(outName) 
-    if not save_file.exists():
-        with open(save_file, 'w') as file:
-            dump(DATA, file)
-    else:
-        with open(save_file, 'r') as file:
-            data_save = load(file)
+        if tk%writeInterval == 0:
+            with open(filePath, 'r') as file:
+                data = load(file)
+            
+            # update time dictionary
+            data['time'] = time
+            with open(filePath, 'w') as file:
+                dump(data, file)
         
         
         
