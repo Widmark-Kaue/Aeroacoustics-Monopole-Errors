@@ -2,13 +2,9 @@
 
 // ------------ Parâmetros globais ------------------
 AoA             0.0;
-M               0.5;
+M               0.2; //[0.1 0.5]
 soundSpeed      346.527346794;
 freq            10.0;
-
-ppw             8;
-lambdaU         17;
-lambdaD         52;
 
 // ------------------- 0/ ---------------------------
 
@@ -19,9 +15,16 @@ vFreestream    #calc "sin(degToRad($AoA))*$M*$soundSpeed";
 // ------------------- constant/ -------------------------
 
 // ------------------- system/ ---------------------------
+// controlDict
+    // n = 4000 -> 2.5e-5
+    // n = 1000 -> 1.0e-4
+    // n = 800  -> 1.25e-4
+    // n = 80   -> 1.25e-3
+dt                  1.25e-4;
+
 
 // fvSchemes
-defaultTimeScheme    backward; // Euler, CranckNicolson 0.9
+defaultTimeScheme    backward; // Euler, CrankNicolson 0.9
 defaultAdvScheme     vanLeer;  // upwind, limitedLinear 1, linearUpwind grad(h)
 defaultAdvSchemeV    vanLeerV; // upwind, limitedLinear 1, linearUpwind grad(U)
 defaultIntScheme     vanLeer;
@@ -29,10 +32,4 @@ defaultIntSchemeV    vanLeerV;
 
 //fvOptions
 r1              #calc "2*$lambdaD";
-r2              #calc "4.5*$lambdaD"; //3.5 -> quadMesh  //4.5 -> newMesh
-
-//blockMeshDict
-l               #calc "8*$lambdaD";
-range           #calc "float(-4*$lambdaD)";
-N               196;// nPoints 8 PPW //#calc "int(float($l) / $lambdaU * $ppw )";
-// N precisa ser par
+r2              #calc "7.5*$lambdaD";

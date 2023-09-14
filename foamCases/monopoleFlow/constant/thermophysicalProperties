@@ -40,7 +40,7 @@ mixture
     }
     transport
     {
-        mu             0; //1.8e-05;
+        mu             1.8e-05;
         Pr             0.7;
     }
 }
