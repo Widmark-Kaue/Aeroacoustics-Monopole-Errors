@@ -156,16 +156,20 @@ def plotSchemesGO(
                      y = p
                  )
              )
-            if windows: 
+            if windows:
+                min_idx = x.searchsorted(xsim[0])
+                max_idx = x.searchsorted(xsim[1])+1
+                xaux = x[min_idx:max_idx]
+                
                 win = 3
-                window = (x[-1]- x[0])/win
+                window = (xaux[-1]- xaux[0])/win
                 pos = 0
-                ticks = [x[0]]
+                ticks = [xaux[0]]
                 for i in range(win):
                     begin = pos
-                    pos   = x.searchsorted(x[0] + (i+1)*window)
+                    pos   = xaux.searchsorted(xaux[0] + (i+1)*window)
                     end   = pos 
-                    ticks.append(x[end])
+                    ticks.append(xaux[end])
                 
                 fig.update_xaxes(tickvals = round(ticks,1), showgrid = True, gridcolor = 'gray')
         
