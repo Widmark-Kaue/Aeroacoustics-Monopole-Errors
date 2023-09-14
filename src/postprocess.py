@@ -12,8 +12,20 @@ def rmsSpacial(
 
     xa, pa = pxa
     psimf = interp1d(linspace(xsim[0], xsim[1], len(psim)), psim, kind='cubic')
+    
+    if min(xa) < xsim[0]:
+        min_idx = xa.searchsorted(xsim[0])
+        xa = xa[min_idx:]
+        pa = pa[min_idx:]
+        
+    if max(xa) > xsim[1]:
+        max_idx = xa.searchsorted(xsim[1])+1
+        xa = xa[:max_idx]
+        pa = pa[:max_idx]
+    
     psimf = psimf(xa)
 
+    
     rms = []
     window = (xa[-1] - xa[0]) / windows
     pos = 0
