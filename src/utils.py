@@ -2,10 +2,11 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
 from re import sub
+from json import load
 from src.path import *
 from string import ascii_letters
 from src.postprocess import rmsSpacial
-from numpy import loadtxt, linspace, round
+from numpy import loadtxt, linspace, round, array
 
 def importData(
         case       : str,
@@ -108,6 +109,7 @@ def plotSchemes(
 def plotSchemesGO(
         psim     :dict,
         analitc  :Path = None,
+        time     :float = 2,
         xsim     :tuple =( -104 , 104 ),
         title    :str = 'unknow',
         legend   :int = 1,
@@ -130,7 +132,21 @@ def plotSchemesGO(
         ndata = 2
         
         if analitc !=None:
-            x, p = loadtxt(analitc, unpack=True)
+            if analitc.suffix == '.dat':
+                x, p = loadtxt(analitc, unpack=True)
+            elif analitc.suffix == '.json':
+                with open(analitc, 'r') as file:
+                    data = load(file)
+                    nx = data['nx']
+                    ny = data['ny']
+                    ypos  = linspace(data['ylim'][0], data['ylim'][1], ny).searchsorted(0) 
+                    x  = linspace(data['xlim'][0], data['xlim'][1], nx)
+                    p  = array(data[f'{time}']).T[ypos]
+            else:
+                assert False, "Erro: Invalid file"
+                
+            
+            
             fig.add_trace(
                  go.Scatter(
                      visible=True,
