@@ -28,6 +28,8 @@ gradSchemes
     default         Gauss linear;
     grad(U)         cellMDLimited Gauss linear 1;
     grad(p)         Gauss linear 0.33;
+    grad(k)         cellMDLimited Gauss linear 1;
+    grad(omega)     cellMDLimited Gauss linear 1;
 }
 
 // defaultAdvScheme     vanLeer;
@@ -46,7 +48,11 @@ divSchemes
     //energy equation
     div(phi,h)                                      Gauss $defaultAdvScheme;
     div(phi,K)                                      Gauss $defaultAdvScheme;
-
+    div(phi,e)                                      Gauss linearUpwind limited;
+    div(phi,Ekp)                                    Gauss linearUpwind limited;
+    div(phi,k)                                      Gauss linearUpwind limited;
+    div(phi,omega)                                  Gauss linearUpwind limited;
+   
     //continuity equation
     div(phid,p)                                     Gauss $defaultAdvScheme;
 
@@ -87,6 +93,11 @@ fluxRequired
 {
     p;
     pcorr;
+}
+
+wallDist
+{
+    method meshWave;
 }
 
 

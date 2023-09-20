@@ -5,8 +5,12 @@ AoA             0.0;
 M               0.2; //[0.1 0.5]
 soundSpeed      346.527346794;
 freq            10.0;
-
+lambdaD         42;    
 // ------------------- 0/ ---------------------------
+
+// turbulent params
+omegaInlet      10;
+kInlet          0.01;
 
 // U
 uFreestream    #calc "cos(degToRad($AoA))*$M*$soundSpeed";

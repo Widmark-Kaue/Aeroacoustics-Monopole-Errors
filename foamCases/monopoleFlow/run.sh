@@ -14,14 +14,6 @@
 #SBATCH --mail-type=END                    # Envia email quando o trabalho finalizar
 #SBATCH --mail-type=FAIL                   # Envia email caso o trabalho apresentar uma mensagem de erro.
 
-# Repassa ao OpenMP quantos cores foram definidos nesse script
-if [ -n "$SLURM_CPUS_PER_TASK" ]; then
-	omp_threads=$SLURM_CPUS_PER_TASK
-else
-	omp_threads=1
-fi
-export OMP_NUM_THREADS=$omp_threads
-
 module load openfoam.com/2112
 
 source $WM_PROJECT_DIR/bin/tools/RunFunctions
@@ -44,6 +36,6 @@ runParallel $(getApplication)
 
 #--- Pós-processamento
 runApplication reconstructPar -latestTime
-postProcess -latestTime -func probesSpacial > log.postProcessSpacial
+# postProcess -latestTime -func probesSpacial > log.postProcessSpacial
 # postProcess -func probesTime > log.postProcessTime
 

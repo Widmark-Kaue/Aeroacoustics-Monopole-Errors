@@ -9,56 +9,33 @@ FoamFile
 {
     version     1812;
     format      ascii;
-    class       dictionary;
-    location    "system";
-    object      controlDict;
+    class       volScalarField;
+    object      p;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-#include "../configDict"
 
-application     myrhoCentralFoam;//rhoPimpleFoam;
+dimensions              [1 -1 -2 0 0 0 0];
 
-startFrom       latestTime;//latestTime;
+internalField           uniform 101325;
 
-startTime       0;
-
-stopAt          endTime;
-
-endTime         2;
-
-deltaT          $dt; 
-
-writeControl    adjustableRunTime;
-
-writeInterval   0.01;
-
-purgeWrite      0;//200;
-
-writeFormat     binary;
-
-writePrecision  10;
-
-writeCompression off;//on;
-
-timeFormat      general;
-
-timePrecision   6;
-
-runTimeModifiable true;
-
-adjustTimeStep  false;
-
-maxCo           0.3;
-
-maxDeltaT       1e-5;
-
-functions
+boundaryField
 {
- #include "average"
+    frontAndBack
+    {
+        type            empty;
+    }
 
- //libs for turbulent simulations
- #include "FOMachNo" 
- #includeFunc solverInfo
+//    "(top|bottom|left|right)"
+    outer
+    {
+        type            waveTransmissive;
+        field           p;
+        phi             phi;
+        rho             rho;
+        psi             thermo:psi;
+        gamma           1.4;
+        value           $internalField;
+    }
 }
 
 // ************************************************************************* //

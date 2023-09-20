@@ -9,56 +9,39 @@ FoamFile
 {
     version     1812;
     format      ascii;
-    class       dictionary;
-    location    "system";
-    object      controlDict;
+    class       volVectorField;
+    object      U;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 #include "../configDict"
 
-application     myrhoCentralFoam;//rhoPimpleFoam;
+dimensions      [0 1 -1 0 0 0 0];
 
-startFrom       latestTime;//latestTime;
+internalField   uniform ($uFreestream $vFreestream 0); // Initial velocity field, change accordingly
 
-startTime       0;
 
-stopAt          endTime;
-
-endTime         2;
-
-deltaT          $dt; 
-
-writeControl    adjustableRunTime;
-
-writeInterval   0.01;
-
-purgeWrite      0;//200;
-
-writeFormat     binary;
-
-writePrecision  10;
-
-writeCompression off;//on;
-
-timeFormat      general;
-
-timePrecision   6;
-
-runTimeModifiable true;
-
-adjustTimeStep  false;
-
-maxCo           0.3;
-
-maxDeltaT       1e-5;
-
-functions
+boundaryField
 {
- #include "average"
-
- //libs for turbulent simulations
- #include "FOMachNo" 
- #includeFunc solverInfo
+    frontAndBack 
+    {
+        type            empty;
+    }
+//    "(top|bottom|left|right)" 
+    outer 
+    {
+/*
+        type            freestreamVelocity;
+        freestreamValue $internalField;
+        value           $internalField;
+*/
+        type            waveTransmissive;
+        field           U;
+        phi             phi;
+        rho             rho;
+        psi             thermo:psi;
+        gamma           1.4;
+        value           $internalField;
+    }
 }
 
 // ************************************************************************* //
