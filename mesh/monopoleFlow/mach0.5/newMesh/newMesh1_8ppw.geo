@@ -129,7 +129,14 @@ Physical Surface("outer", 33) = {18, 21, 6, 12};
 //+
 Physical Surface("frontAndBack", 34) = {17, 1, 5, 20, 2, 22, 3, 14, 4, 10};
 //+
-Physical Volume("internal", 35) = {5, 2, 3, 1, 4};
-
-Mesh 3;
-
+SetFactory("OpenCASCADE");
+//+
+SetFactory("OpenCASCADE");
+//+
+SetFactory("OpenCASCADE");
+//+
+SetFactory("OpenCASCADE");
+//+
+SetFactory("OpenCASCADE");
+//+
+SetFactory("OpenCASCADE");

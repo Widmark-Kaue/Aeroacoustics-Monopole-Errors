@@ -1,8 +1,8 @@
 SetFactory("OpenCASCADE");
 
 // Parâmetros
-lambdaU  = DefineNumber[28,             Name "Parameters/lambda min"];
-lambdaD  = DefineNumber[42,             Name "Parameters/lambda doppler"];
+lambdaU  = DefineNumber[3,             Name "Parameters/lambda U"];
+lambdaD  = DefineNumber[4,             Name "Parameters/lambda D"];
 rinner   = DefineNumber[2*lambdaD,     Name "Parameters/rinner"];
 rout     = DefineNumber[10*lambdaD,     Name "Parameters/rout"];
 cos45    = DefineNumber[0.707106781,    Name "Parameters/cos"];
@@ -88,7 +88,7 @@ Plane Surface(5) = {5};
 //+
 Recombine Surface {2, 3, 4, 5, 1};
 
-aux = 1.05;
+aux = 1;
     // quadrado
 Transfinite Curve {1, 2, 3, 4}  = a Using Progression 1.1;
     
@@ -132,4 +132,4 @@ Physical Surface("frontAndBack", 34) = {17, 1, 5, 20, 2, 22, 3, 14, 4, 10};
 //+
 Physical Volume("internal", 35) = {5, 2, 3, 1, 4};
 
-// Mesh 3;
+Mesh 3;

@@ -8,11 +8,11 @@ rout     = DefineNumber[10*lambdaD,     Name "Parameters/rout"];
 cos45    = DefineNumber[0.707106781,    Name "Parameters/cos"];
 
 // Definindo malha
-ppw         = DefineNumber[32,                           Name "Mesh/ppw"];
+ppw         = DefineNumber[16,                           Name "Mesh/ppw"];
 c           = DefineNumber[(2*rinner)/lambdaU * ppw,      Name "Mesh/c"];
 a         	= DefineNumber[50,                          Name "Mesh/a"];
 b         	= DefineNumber[100,                          Name "Mesh/b"];
-dprog       = DefineNumber[1.025,                        Name "Mesh/dprog"];
+dprog       = DefineNumber[1.015,                        Name "Mesh/dprog"];
 
 // Pontos quadrado interno
 Point(1) = {-rinner, rinner, 0, 1.0};
@@ -90,16 +90,16 @@ Recombine Surface {2, 3, 4, 5, 1};
 
 aux = 1.05;
     // quadrado
-Transfinite Curve {1, 2, 3, 4}  = a Using Progression 1.1;
+Transfinite Curve {1, 2, 3, 4}  = a Using Progression 1;
     
     //1º quarto de círculo
-Transfinite Curve {9, 8, 3, 7}  = c Using Progression aux;
+Transfinite Curve {9, 8, 3, 7}  = c Using Progression 1;
     
     //2º quarto de círculo
 Transfinite Curve {10, 5, 4, 8} = c Using Progression 1;
 
     //3º quarto de círculo
-Transfinite Curve {1, 5, 11, 6} = c Using Progression 1/aux;
+Transfinite Curve {1, 5, 11, 6} = c Using Progression 1;
 
     //4º quarto de círculo
 Transfinite Curve {2, 6, 12, 7} = c Using Progression 1;
@@ -132,4 +132,4 @@ Physical Surface("frontAndBack", 34) = {17, 1, 5, 20, 2, 22, 3, 14, 4, 10};
 //+
 Physical Volume("internal", 35) = {5, 2, 3, 1, 4};
 
-// Mesh 3;
+Mesh 3;
