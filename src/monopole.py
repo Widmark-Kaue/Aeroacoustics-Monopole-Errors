@@ -19,7 +19,7 @@ def monopoleFlowSy (
     M:              float = 0.5,
     gamma:          float = 1.4,
     PTR:            tuple = (101325, 298.15, 8314.46261815324 / 28.9),
-    writeInterval:  float = 1,
+    writeInterval:  int   = 1,
     printInterval:  float = 10,
     savePath:       Path  = PATH_DATA,
     outName:        str   = None
@@ -107,7 +107,7 @@ def monopoleFlowSy (
         t = list(t)
     except:
         t = [t]
-    for tk in t:
+    for it, tk in enumerate(t):
         print(5*'-'+f' t obs = {tk} '+'-'*5)
         for i, xi in enumerate(x):
             for j, yj in enumerate(y):
@@ -127,8 +127,9 @@ def monopoleFlowSy (
         #Field resolution
         pFlow = fftconvolve(f, H, 'same')*deltax*deltay
         time.update({f'{tk}': pFlow.tolist()})
-    
-        if tk%writeInterval == 0:
+
+        cond = True if writeInterval == 1 else (it+1)%writeInterval == 0
+        if cond:
             with open(filePath, 'r') as file:
                 data = load(file)
             

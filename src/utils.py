@@ -141,7 +141,7 @@ def plotSchemesGO(
                     ny = data['ny']
                     ypos  = linspace(data['ylim'][0], data['ylim'][1], ny).searchsorted(0) 
                     x  = linspace(data['xlim'][0], data['xlim'][1], nx)
-                    p  = array(data[f'{time}']).T[ypos]
+                    p  = array(data['time'][f'{time}']).T[ypos]
             else:
                 assert False, "Erro: Invalid file"
                 
