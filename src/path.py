@@ -15,7 +15,9 @@ if not(path.name == dir):
 PATH_IMAGES = path.joinpath('images')
 PATH_DATA   = path.joinpath('data')
 PATH_PROBES = path.joinpath('observers')
+PATH_MESH   = path.joinpath('mesh')
 
 PATH_IMAGES.mkdir(exist_ok=True)
 PATH_PROBES.mkdir(exist_ok=True)
 PATH_DATA.mkdir(exist_ok=True)
+PATH_MESH.mkdir(exist_ok=True)
