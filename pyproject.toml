@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Widmark Kaue Silva Cardoso <widmark.kaue@grad.ufsc.br>"]
 readme = "README.md"
-packages = [{include = "aeroacoustics_resonators"}]
+packages = [{include = "**\\*.py", from = "."}]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
@@ -12,7 +12,6 @@ numpy = "^1.24.2"
 matplotlib = "^3.7.1"
 scipy = "^1.10.1"
 sympy = "^1.11.1"
-pathlib = "^1.0.1"
 control = "^0.9.3.post2"
 jupyter = "^1.0.0"
 ipykernel = "^6.22.0"
@@ -21,6 +20,8 @@ pandas = "^2.0.0"
 plotly = "^5.16.1"
 pyvista = "^0.42.3"
 pygmsh = "^7.1.17"
+pathlib2 = "^2.3.7.post1"
+trame-vuetify = "^2.3.1"
 
 [tool.blue]
 include = ["src/utils.py", "src/path.py", "src/builder.py", "scripts/wave_length.py"]
