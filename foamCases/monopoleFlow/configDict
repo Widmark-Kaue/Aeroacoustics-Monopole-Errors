@@ -18,9 +18,10 @@ vFreestream    #calc "sin(degToRad($AoA))*$M*$soundSpeed";
 // ------------------- system/ ---------------------------
 // controlDict
     // n = 4000 -> 2.5e-5
+    // n = 2000 -> 5.0e-5
     // n = 1000 -> 1.0e-4
     // n = 800  -> 1.25e-4
-    // n = 80   -> 1.25e-3
+    // n = 400  -> 2.5e-4
 dt                  2.5e-5;
 
 // fvSchemes
