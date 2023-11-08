@@ -39,6 +39,7 @@ solvers
         //nSweeps         2;
         tolerance       1e-015;
         relTol          1e-6;
+        maxIter         80000;
     }
 
     "(U|k|epsilon|h|e|R)Final"
@@ -64,7 +65,7 @@ solvers
         nCellsInCoarsestLevel 100;
         agglomerator    faceAreaPair;
         mergeLevels     1;
-        maxIter         50;
+        maxIter         100;
     }
 /*
     "pcorr.*"

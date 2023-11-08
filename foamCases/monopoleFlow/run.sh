@@ -21,9 +21,8 @@ source $WM_PROJECT_DIR/bin/tools/RunFunctions
 #cp -ar 0.org 0
 
 # --- Gera malha
-#runApplication gmshToFoam cylinderSourceOPT.msh
-#runApplication gmshToFoam teste50ppw.msh
-runApplication gmshToFoam newMesh1.msh
+#runApplication gmshToFoam circMesh.msh
+runApplication gmshToFoam Mesh1_10Hz_8ppw.msh
 runApplication changeDictionary 
 #runApplication blockMesh
 
@@ -36,6 +35,6 @@ runParallel $(getApplication)
 
 #--- Pós-processamento
 runApplication reconstructPar -latestTime
-# postProcess -latestTime -func probesSpacial > log.postProcessSpacial
+postProcess -latestTime -func probesSpacial > log.postProcessSpacial
 # postProcess -func probesTime > log.postProcessTime
 

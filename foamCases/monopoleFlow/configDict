@@ -5,12 +5,9 @@ AoA             0.0;
 M               0.2; //[0.1 0.5]
 soundSpeed      346.527346794;
 freq            10.0;
-lambdaD         42;    
+lambdaD         42;
+lambdaU         28;    
 // ------------------- 0/ ---------------------------
-
-// turbulent params
-omegaInlet      10;
-kInlet          0.01;
 
 // U
 uFreestream    #calc "cos(degToRad($AoA))*$M*$soundSpeed";
@@ -24,16 +21,20 @@ vFreestream    #calc "sin(degToRad($AoA))*$M*$soundSpeed";
     // n = 1000 -> 1.0e-4
     // n = 800  -> 1.25e-4
     // n = 80   -> 1.25e-3
-dt                  1.25e-4;
-
+dt                  2.5e-5;
 
 // fvSchemes
-defaultTimeScheme    backward; // Euler, CrankNicolson 0.9
+defaultTimeScheme    backward; // Euler, CranckNicolson 0.9
 defaultAdvScheme     vanLeer;  // upwind, limitedLinear 1, linearUpwind grad(h)
 defaultAdvSchemeV    vanLeerV; // upwind, limitedLinear 1, linearUpwind grad(U)
 defaultIntScheme     vanLeer;
 defaultIntSchemeV    vanLeerV;
 
 //fvOptions
-r1              #calc "2*$lambdaD";
-r2              #calc "7.5*$lambdaD";
+r1              #calc "3.5*$lambdaD";
+r2              #calc "11.5*$lambdaD";
+
+//blockMeshDict
+l               #calc "10*$lambdaD";
+range           #calc "float(-5*$lambdaD)";
+N               120; //nPoints for 8 PPW

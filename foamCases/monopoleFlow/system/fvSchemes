@@ -26,7 +26,7 @@ ddtSchemes
 gradSchemes
 {
     default         Gauss linear;
-    grad(U)         cellMDLimited Gauss linear 1;
+    grad(U)         cellMDLimited Gauss linear 0.33;
     grad(p)         Gauss linear 0.33;
     grad(k)         cellMDLimited Gauss linear 1;
     grad(omega)     cellMDLimited Gauss linear 1;
@@ -38,20 +38,17 @@ gradSchemes
 divSchemes
 {
     default                                         none;
-    div(phi,k)                                      Gauss upwind;
-    div(phi,epsilon)                                Gauss upwind;
 
     //momentum equation
     div(phi,U)                                      Gauss $defaultAdvSchemeV;
-    div(((rho*nuEff)*dev2(T(grad(U)))))             Gauss linear;
 
     //energy equation
     div(phi,h)                                      Gauss $defaultAdvScheme;
     div(phi,K)                                      Gauss $defaultAdvScheme;
-    div(phi,e)                                      Gauss linearUpwind limited;
-    div(phi,Ekp)                                    Gauss linearUpwind limited;
-    div(phi,k)                                      Gauss linearUpwind limited;
-    div(phi,omega)                                  Gauss linearUpwind limited;
+    div(phi,e)                                      Gauss limitedLinear 1;
+    div(phi,Ekp)                                    Gauss limitedLinear 1;
+    div(phi,k)                                      Gauss limitedLinear 1;
+    div(phi,omega)                                  Gauss limitedLinear 1;
    
     //continuity equation
     div(phid,p)                                     Gauss $defaultAdvScheme;
