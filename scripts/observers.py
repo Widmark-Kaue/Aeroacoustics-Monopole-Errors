@@ -28,4 +28,12 @@ for ppw in [8, 16, 32, 64]:
         subpath=Path('mach0.2')
         )
 
+# %% Time probes
+a = len(np.arange(-3,3.5, 0.5))
+probes(
+    name_of_archive='probesTime',
+    number_of_probes= a,
+    lim = (-3*lambd, 3*lambd),
+    subpath=Path('mach0.2')    
+)
 # %%
