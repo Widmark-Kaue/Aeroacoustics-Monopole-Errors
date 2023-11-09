@@ -35,10 +35,11 @@ def importData(
     return pressure
 
 def probes(
+    name_of_archive : str,
     number_of_probes: int = 30,
     lim             : tuple = (2, 102),
-    name_of_archive : str = 'probesTime',
     field           : str = 'p',
+    subpath         : Path = None
 )->None:
     p = linspace(lim[0], lim[1], number_of_probes)
 
@@ -54,7 +55,13 @@ def probes(
 
     arq = sub('#', write, arq)
 
-    with open(PATH_PROBES.joinpath(name_of_archive), 'w') as file:
+    
+    if subpath == None:
+        path = PATH_PROBES.joinpath(name_of_archive) 
+    else: 
+        path = PATH_PROBES.joinpath(subpath.joinpath(name_of_archive))
+        
+    with open(path, 'w') as file:
         file.write(arq)
 
 def microphones(
