@@ -5,6 +5,7 @@ poetry.lock
 *.msh
 teste.txt
 msh/
+plotly-interactive/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
