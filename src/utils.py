@@ -10,27 +10,8 @@ from src.postprocess import rmsSpacial
 from plotly.colors import DEFAULT_PLOTLY_COLORS as COLORS
 from numpy import loadtxt, linspace, round, array, searchsorted
 
-def importData(
-        case       : str,
-        test       : str,
-        subcase    : str    = '',
-        subtest    : str    = '',
-        time       : float  = 2,
-        simulation : str    = 'monopoleFlow' ,
-        toPa       : float  = 101325,
-        keyword    : str    = None,
-        oldfile    : bool   = False,
-        xsim_range : tuple  = None
-)-> dict:
-    
-    PATH_IMPORT = PATH_DATA.joinpath(simulation, case, test, subcase)
-        
+def importSpacialData(arqList: list, toPa: float, xsim_range: tuple) -> dict:
     pressure    = {}
-    if keyword != None:
-        arqList = PATH_IMPORT.joinpath(str(time), subtest).glob(f'*{keyword}*')
-    else:
-        arqList = PATH_IMPORT.joinpath(str(time), subtest).iterdir()
-    
     for arq in arqList:
         p  = loadtxt(arq, comments='#')
         p = p[1:]
@@ -44,6 +25,56 @@ def importData(
         pressure.update({name: p - toPa})
     return pressure
 
+def importTimeData(arqList: list, toPa: float, num_probe:int) -> dict:
+    pressure = {}
+    for arq in arqList:
+        data = loadtxt(arq, comments='#')
+        p = data[:, 1:]
+        t = data[:,0]
+        name = sub('_', ' ', arq.stem)
+        
+        if not num_probe == None:
+            _,col = p.shape
+            assert num_probe <= col, 'Error: Num probe exceed number of probes'
+            p = p[:,num_probe]
+        pressure.update({name: (t, p - toPa)})
+    return pressure
+
+def importData(
+        case       : str,
+        test       : str,
+        subcase    : str    = '',
+        subtest    : str    = '',
+        time       : float  = 2,
+        simulation : str    = 'monopoleFlow' ,
+        toPa       : float  = 101325,
+        keyword    : str    = None,
+        oldfile    : bool   = False,
+        xsim_range : tuple  = None,
+        num_probe  : int    = None,
+        typeFile   : str    = 'spacial' 
+)-> dict:
+    
+    PATH_IMPORT = PATH_DATA.joinpath(simulation, case, test, subcase)
+    
+    if typeFile == 'spacial':
+        if keyword != None:
+            arqList = PATH_IMPORT.joinpath(str(time), subtest).glob(f'*{keyword}*')
+        else:
+            arqList = PATH_IMPORT.joinpath(str(time), subtest).iterdir()
+        
+        pressure = importSpacialData(arqList=arqList, toPa=toPa, xsim_range=xsim_range)
+    elif typeFile == 'time':
+        if keyword != None:
+            arqList = PATH_IMPORT.joinpath(subtest).glob(f'*{keyword}*')
+        else:
+            arqList = PATH_IMPORT.joinpath(subtest).iterdir()
+        
+    else:
+        assert False, 'Error: typeFile not recognized.'
+    
+    return pressure
+    
 def probes(
     name_of_archive : str,
     number_of_probes: int = 30,
