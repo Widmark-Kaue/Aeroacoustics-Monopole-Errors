@@ -1,31 +1,25 @@
 import numpy as np 
-import plotly.graph_objects as go 
+import matplotlib.pyplot as plt
+from src.utils import probes
 
-lambdaD = 48
+lambdaD = 42
 theta = np.linspace(0,np.pi, 15)
-r = np.array([0.5, 1, 1.5, 2])*lambdaD
+r = np.array([1,  3])*lambdaD
 
 x = lambda r: r*np.cos(theta)
 y = lambda r: r*np.sin(theta)
-
-fig = go.Figure()
-
 for ri in r:
-    fig.add_trace(
-        go.Scatter(
-            x = x(ri),
-            y = y(ri),
-            mode = 'lines+markers',
-            line = dict(color = 'black', dash = 'dash'),
-            opacity = 0.7,
-            showlegend=False
+    p = np.zeros((len(x(ri)), 2))
+    p[:,0] = x(ri)
+    p[:,1] = y(ri)
+
+    probes(
+        name_of_archive=f'probesRadial_R{1 if ri == r[0] else 3}',
+        subpath='mach0.2',
+        p = p
         )
-        
-    )
 
-r2  = np.arange(-2,-2.5, 0.5)
+    plt.plot(p[:,0], p[:,1], 'o', label =  f'r = {ri}')
 
-fig.update_xaxes(title_text = r'$\lambda_D$', tickvals = lambdaD*r2, ticktext = [f'{i}' for i in r])
-fig.update_yaxes(title_text = '', showticklabels = False)
-
-fig.show()
+plt.legend()
+plt.show()

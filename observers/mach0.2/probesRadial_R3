@@ -1,0 +1,36 @@
+probesRadial_R3
+{
+        // Where to load it from
+        libs ( "libsampling.so" );
+        type            probes;
+        // Name of the directory for probe data
+        name            probesRadial_R3;
+        // Write at same frequency as fields
+        writeControl   timeStep;
+        writeInterval  1;
+        // Fields to be probed
+        fields
+        (
+            p
+        );
+
+        probeLocations
+		(
+			(126.0 0.0 0)
+			(122.841 28.038 0)
+			(113.522 54.669 0)
+			(98.511 78.56 0)
+			(78.56 98.511 0)
+			(54.669 113.522 0)
+			(28.038 122.841 0)
+			(0.0 126.0 0)
+			(-28.038 122.841 0)
+			(-54.669 113.522 0)
+			(-78.56 98.511 0)
+			(-98.511 78.56 0)
+			(-113.522 54.669 0)
+			(-122.841 28.038 0)
+			(-126.0 0.0 0)
+		);
+        
+}
