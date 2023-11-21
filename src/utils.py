@@ -69,7 +69,7 @@ def importData(
             arqList = PATH_IMPORT.joinpath(subtest).glob(f'*{keyword}*')
         else:
             arqList = PATH_IMPORT.joinpath(subtest).iterdir()
-        
+        pressure = importTimeData(arqList=arqList, toPa=toPa, num_probe=num_probe)
     else:
         assert False, 'Error: typeFile not recognized.'
     
@@ -80,9 +80,9 @@ def probes(
     number_of_probes: int = 30,
     lim             : tuple = (2, 102),
     field           : str = 'p',
-    subpath         : Path = None
+    subpath         : Path = None,
+    p               : array = None
 )->None:
-    p = linspace(lim[0], lim[1], number_of_probes)
 
     arq = open(PATH_PROBES / 'templateProbe.txt', 'r').read()
 
@@ -90,17 +90,25 @@ def probes(
     arq = sub('@', field, arq)
 
     write = 'probeLocations\n\t\t(\n'
-    for i in p:
-        write += f'\t\t\t({round(i,3)} 0 0)\n'
-    write += '\t\t);'
-
+    
+    if p.any() == None:
+        p = linspace(lim[0], lim[1], number_of_probes)
+    
+        for i in p:
+            write += f'\t\t\t({round(i,3)} 0 0)\n'
+        write += '\t\t);'
+    else:
+        for i in range(len(p)):
+            write += f'\t\t\t({round(p[i,0],3)} {round(p[i,1],3)} 0)\n'
+        write += '\t\t);'
+         
     arq = sub('#', write, arq)
 
     
     if subpath == None:
         path = PATH_PROBES.joinpath(name_of_archive) 
     else: 
-        path = PATH_PROBES.joinpath(subpath.joinpath(name_of_archive))
+        path = PATH_PROBES.joinpath(subpath,name_of_archive)
         
     with open(path, 'w') as file:
         file.write(arq)
@@ -164,6 +172,7 @@ def plotSchemesGO(
         legend   :list = None,
         windows  :bool = False,
         save     :bool = False,
+        show     :bool = True,
         format   :str  = 'html',
         save_name:str  = None,
         plotconfig:dict= dict()
@@ -251,7 +260,8 @@ def plotSchemesGO(
                     name = name,
                     hovertext=addlabel,
                     x = xsimV,
-                    y = psim[scheme]
+                    y = psim[scheme],
+                    opacity=0.75
                 )
             )
             
@@ -286,7 +296,7 @@ def plotSchemesGO(
         )
         
         
-        fig.show()
+        if show: fig.show()
 
         if save:
             name_image = save_name if save_name != None else 'unknow'
@@ -295,3 +305,5 @@ def plotSchemesGO(
             else:
                 if format not in name_image: name_image = f'{name_image}.{format}'
                 fig.write_image(PATH_IMAGES.joinpath('results',f'{name_image}'), format = format, scale = 5)
+        
+        return fig
