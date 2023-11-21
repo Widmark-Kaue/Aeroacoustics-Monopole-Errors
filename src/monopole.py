@@ -219,25 +219,29 @@ def monopoleFlowSyE (
         t = list(t)
     except:
         t = [t]
+        
+    # cache
+    y_squared = y**2
     for it, tk in enumerate(t):
         print(5*'-'+f' t obs = {tk} '+'-'*5)
         for i, xi in enumerate(x):
-            xi_squared = xi**2
-            for j, yj in enumerate(y):
-                yj_squared = yj**2
-                if xi == 0 and yj == 0: 
-                    H[i,j] = Hsy.xreplace(
-                        {
-                            xSy: xi,
-                            ySy: yj,
-                            tSy: tk,
-                        }
-                    ).evalf()
-                else:                    
-                    H[i, j] = Hsy_np(xi, yj, tk)
+            xi_squared = xi**2      # cache
+            if xi == 0:
+                zero_pos = list(y).index(0)
+                H[i, :zero_pos  ] = Hsy_np(xi,   y[:zero_pos  ], tk)
+                H[i, zero_pos+1:] = Hsy_np(xi, y[zero_pos+1:], tk)
+                H[i, zero_pos] = Hsy.xreplace(
+                    {
+                        xSy: xi,
+                        ySy: y[zero_pos],
+                        tSy: tk,
+                    }
+                ).evalf()
+            else:
+                H[i] = Hsy_np(xi, y, tk)
                 
-                # Gaussian distribution of amplitude
-                f[i, j] = epsilon * np.exp(-alpha * (xi_squared + yj_squared))
+            # Gaussian distribution of amplitude
+            f[i] = epsilon * np.exp(-alpha * (xi_squared + y_squared))
             if xi%printInterval == 0:
                 print(f' - X = {xi} - Complete')
         
