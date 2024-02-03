@@ -25,6 +25,7 @@ trame-vuetify = "^2.3.1"
 kaleido = "0.1.0post1"
 numba = "^0.58.1"
 symengine = "^0.11.0"
+img2pdf = "^0.5.1"
 
 [tool.blue]
 include = ["src/utils.py", "src/path.py", "src/builder.py", "scripts/wave_length.py"]

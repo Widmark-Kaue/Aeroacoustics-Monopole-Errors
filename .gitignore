@@ -6,6 +6,12 @@ poetry.lock
 teste.txt
 msh/
 plotly-interactive/
+images/
+data/monopoleFlow/*Mesh*
+data/monopoleFlow/mach0.2*
+data/monopoleFlow/analytical/*timeSteps*
+
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
