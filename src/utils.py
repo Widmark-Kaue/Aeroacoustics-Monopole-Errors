@@ -171,6 +171,7 @@ def plotSchemesGO(
         numlegend:int = 1,
         legend   :list = None,
         windows  :bool = False,
+        rms_acur :int  = 2, 
         save     :bool = False,
         show     :bool = True,
         format   :str  = 'html',
@@ -247,10 +248,13 @@ def plotSchemesGO(
             else:
                 name = legend[j] 
             addlabel = ''
-            if windows:
+            if windows and analitc!=None:
                  rms =  rmsSpacial((x,p), psim[scheme], xsim = xsim,windows=win)
                  for i in range(len(rms)):
-                     addlabel += f'win {i+1} = {round(rms[i]*100,2)} % '
+                     if i < len(rms) -1:
+                        addlabel += f'win {i+1} = {round(rms[i]*100,rms_acur)} % '
+                     else:
+                         addlabel += f'Total = {round(rms[i]*100,2)} %'
             xsimV = linspace(xsim[0], xsim[1], len(psim[scheme]))
             fig.add_trace(
                 go.Scatter(
@@ -301,6 +305,7 @@ def plotSchemesGO(
         if save:
             name_image = save_name if save_name != None else 'unknow'
             if format == 'html':
+                if not PATH_IMAGES.joinpath('plotly-interactive').exists(): PATH_IMAGES.joinpath('plotly-interactive').mkdir()
                 fig.write_html(PATH_IMAGES.joinpath('plotly-interactive',f'{name_image}.html'))
             else:
                 if format not in name_image: name_image = f'{name_image}.{format}'

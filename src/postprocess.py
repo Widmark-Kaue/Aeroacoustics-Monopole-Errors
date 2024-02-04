@@ -6,9 +6,9 @@ from scipy.interpolate import interp1d
 def rmsSpacial(
     pxa: tuple, 
     psim: array, 
-    xsim: tuple = (-104, 104), 
+    xsim: tuple, 
     windows: int = 1
-) -> tuple:
+) -> list:
 
     xa, pa = pxa
     psimf = interp1d(linspace(xsim[0], xsim[1], len(psim)), psim, kind='cubic')
@@ -29,6 +29,8 @@ def rmsSpacial(
     rms = []
     window = (xa[-1] - xa[0]) / windows
     pos = 0
+    
+    # Windows RMS
     for i in range(windows):
         begin = pos
         pos = xa.searchsorted(xa[0] + (i + 1) * window)
@@ -37,28 +39,33 @@ def rmsSpacial(
         den = trapz(pa[begin:end] ** 2, xa[begin:end])
         rms.append(num / den)
 
-    return tuple(rms)
+    # Total RMS
+    num = trapz((psimf - pa)**2, xa)
+    den = trapz(pa**2, xa)
+    rms.append(num/den)    
+    
+    return rms
 
+def rmsTime(p:array, t:array) -> float:
+    den = t[-1]  - t[0]
+    prms = sqrt(trapz(p**2, t)/den)
+    
+    return prms
 
-def phaseAmplitude(
-    pta: tuple, 
-    sim: array,
-    ttran : float,
-) -> tuple:
+def phaseAmplitude( pta: tuple, ptsim: tuple, ttran : float) -> tuple:
 
     ta, pa = pta
-    ts, ps = sim
-    
-    assert len(ta) ==  len(ts), "Vetores de tempo precisam ter o mesmo tamanho"
-    
+    tsim, psim = ptsim
+        
     na = ta.searchsorted(ttran)
-    ns = ts.searhsorted(ttran)
+    ns = tsim.searhsorted(ttran)
     
-    parms2 = 1/(ta[-1] - ttran) * trapz(pa[na:]**2, ta[na:])
-    psrms2 = 1/(ts[-1] - ttran) * trapz(ps[ns:]**2, ts[ns:])
+    pa_rms = rmsTime(pa[na:], ta[na:])
+    psim_rms = rmsTime(psim[ns:], tsim[ns:])
     
-    Aerror = abs(psrms2 - parms2)/parms2
-
+    e_am = abs(psim_rms**2 - pa_rms**2)/(pa_rms**2)
+    
+    
     """
     1º passo: identificar onde dentro da solução análitica e numérica começa o regime estacionário
     2º passo: definir esse ponto como uso para o cálculo prms
@@ -67,5 +74,5 @@ def phaseAmplitude(
     5º passo: 
     """
     
-    return Aerror
+    return 
     
