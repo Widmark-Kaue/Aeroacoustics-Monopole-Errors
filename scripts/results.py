@@ -7,12 +7,13 @@ from src.path import PATH_DATA, PATH_IMAGES, Path
 
 from plotly.subplots import make_subplots
 
-analitic_mach02 = PATH_DATA.joinpath('monopoleFlow', 'analytical', 'monopole_10Hz_M0.2.json')
+analitic_mach02 = PATH_DATA.joinpath('monopoleFlow', 'analytical', 'monopole_10Hz_M0.2_3s.json')
 # %% MALHA CIRCULAR X MALHA QUADRADA
 psimS = importData(
     case = 'mach0.2_TCC', 
     test='circMesh_ZU', 
-    subcase = 'standardSpacial', 
+    subcase = 'standardSpacial',
+    time = 3, 
     keyword='8ppw',
     xsim_range=(-10*42, 10*42, -3*42, 3*42)
     )
@@ -23,6 +24,7 @@ psimS.update(
         case = 'mach0.2_TCC', 
         test='quadMesh', 
         subcase = 'standardSpacial', 
+        time    = 3,
         keyword='8ppw',
         xsim_range=(-10*42, 10*42, -3*42, 3*42),
         )
@@ -33,10 +35,11 @@ psimS['Malha Quadrada'] = psimS.pop('vanLeer 8ppw n4000')
 plotSchemesGO(
     psimS, 
     xsim=(-3*42, 3*42), 
-    analitc=analitic_mach02, 
+    analitc=analitic_mach02,
+    time = 3, 
     save=True, 
     save_name= 'Spacial_comp_malhas_8PPW',
-    format='png',
+    # format='png',
     windows =True, 
     numlegend=2,
     plotconfig = dict(
@@ -56,7 +59,8 @@ plotSchemesGO(
 
 psimS = importData(
     case = 'mach0.2_TCC', 
-    test='circMesh_ZU', 
+    test='circMesh_ZU',
+    time = 3, 
     subcase = 'standardSpacial', 
     xsim_range=(-10*42, 10*42, -3*42, 3*42)
 )
@@ -69,9 +73,10 @@ fig = plotSchemesGO(
     psimS, 
     xsim=(-3*42, 3*42), 
     analitc=analitic_mach02, 
-    save=False, 
+    time = 3,
+    save=True, 
     save_name= 'Spacial_comp_PPW',
-    format='png',
+    # format='png',
     windows =True, 
     numlegend=2,
     plotconfig = dict(
@@ -123,27 +128,31 @@ fig2.write_image(
 for ppw in [16, 32]:
     psimS = importData(
         case = 'mach0.2_TCC', 
-        test='circMesh_ZU', 
+        test='circMesh_ZU',
+        time = 3, 
         subcase = 'standardSpacial',
         keyword= f'{ppw}ppw',
-        xsim_range=(-10*42, 10*42, -3*42, 3*42)
+        xsim_range=(-10*42, 10*42, -10*42, 10*42)
     )
     psimS2 = importData(
         case = 'mach0.2_TCC',
         test='circMesh_ZU',
+        time = 3,
         subcase = 'spacialSchemesTest',
         keyword= f'{ppw}ppw',
-        xsim_range=(-10*42, 10*42, -3*42, 3*42)
+        xsim_range=(-10*42, 10*42, -10*42, 10*42)
     )
 
     plotSchemesGO(
         psim = {**psimS, **psimS2}, 
-        xsim=(-3*42, 3*42), 
-        analitc=analitic_mach02, 
-        save=True, 
+        xsim=(-10*42, 10*42), 
+        # analitc=analitic_mach02,
+        time = 3, 
+        save=False, 
         save_name= f'Spacial_comp_schemes_{ppw}PPW',
-        format='png',
-        windows =True, 
+        # format='png',
+        windows =False,
+        rms_acur= 5, 
         numlegend=1,
         plotconfig = dict(
             xaxis = dict(
@@ -159,10 +168,11 @@ for ppw in [16, 32]:
         )
     )
 #%% VARIAÇÃO DOS ESQUEMAS TEMPORAIS
-for n in [400, 800, 1000, 2000]:
+for n in [400, 600, 800, 1000]:
     psimS2 = importData(
         case = 'mach0.2_TCC',
         test='circMesh_ZU',
+        time = 3,
         subcase = 'timeSchemesTest',
         keyword= f'n{n}',
         xsim_range=(-10*42, 10*42, -3*42, 3*42)
@@ -170,11 +180,12 @@ for n in [400, 800, 1000, 2000]:
 
     plotSchemesGO(
         psim = psimS2, 
-        xsim=(-3*42, 3*42), 
-        analitc=analitic_mach02, 
+        xsim=(3*42, 10*42), 
+        analitc=analitic_mach02,
+        time = 3, 
         save=True, 
         save_name= f'Time_comp_schemes_n{n}',
-        format='png',
+        # format='png',
         windows =True, 
         numlegend=1,
         plotconfig = dict(
@@ -200,7 +211,25 @@ psim = importData(
 )
 
 t, p = psim['vanLeer 32ppw n4000']
-plt.plot(t, p[:, 12])
-plt.show()
+T = 0.1/2
+
+probes = [4,5,6,7,8,9]
+
+
+for pos in probes:
+    lastPos = 0
+    pico = []
+    for i in range(len(t)):
+        if (t[i] - t[lastPos]) >= T:
+            pico.append(
+                list(np.abs(p[:, pos])).index(
+                np.max(np.abs(p[lastPos:i+1, pos]))
+                )
+            )
+            lastPos = i
+
+    plt.plot(t, p[:, pos], 'b')
+    plt.plot(t[pico[:]], p[pico[:], pos], 'ko', alpha = 0.5)
+    plt.show()
 
 # %%
