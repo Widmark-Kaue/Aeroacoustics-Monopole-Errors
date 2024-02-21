@@ -2789,6 +2789,17 @@ attrs = ">=22.2.0"
 rpds-py = ">=0.7.0"
 
 [[package]]
+name = "reloading"
+version = "1.1.2"
+description = "Reloads source code of a running program without losing state"
+optional = false
+python-versions = "*"
+files = [
+    {file = "reloading-1.1.2-py3-none-any.whl", hash = "sha256:fd5eaa08c6dd85e4dc76b13d7ff7ab6fdc39997e40e320b0faf2bc76dcb85308"},
+    {file = "reloading-1.1.2.tar.gz", hash = "sha256:8c28fc66f458a795ea63f543f4282b14de45b7158cc53b1f895057f5308fca95"},
+]
+
+[[package]]
 name = "requests"
 version = "2.31.0"
 description = "Python HTTP for Humans."
@@ -3519,4 +3530,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "937de9bb323a90aa0669e56724a8846975d4690eccfd3bf3b01aaf0d92161daa"
+content-hash = "59072fcbe9ba783d7e1252ad100ffcb344c0216c0296bda41679eb63282e0431"
