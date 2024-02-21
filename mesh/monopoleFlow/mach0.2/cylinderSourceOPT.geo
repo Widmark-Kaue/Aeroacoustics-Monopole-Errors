@@ -134,19 +134,17 @@ out[]=Extrude {0, 0, depth} {
 };
 out2[]=Extrude {0, 0, depth} {
      Surface{s6}; Layers {1}; Recombine;
-//};
+};
 //+
-
-Physical Surface("frontAndBack", 1) = {s1, s2, s3, s4, s5, s6, 12, 16, 19, 22, 24, 25}; 
+Physical Surface("frontAndBack", 1) = {s1, s2, s3, s4, s5, s6};// 12, 16, 19, 22, 24, 25}; 
 //+
 Physical Surface("outer", 2) = {7};
 //+
-Physical Surface("cylinder", 3) = {4};
+Physical Surface("source") = {6};
+// Physical Surface("cylinder", 3) = {4};
 //+
 Physical Volume("internal") = {1, 2, 3, 4, 5, 6};
 //+
-Physical Volume("source") = {6};
-
 //+
 Field[1] = Distance;
 Field[1].SurfacesList = {8, 11, 10, 9};//{14, 17, 20, 23};
@@ -174,20 +172,3 @@ Mesh.MeshSizeFromPoints = 0;
 Mesh.MeshSizeFromCurvature = 0;
 Mesh.OptimizeThreshold=0.8;
 Mesh.Smoothing=10;
-
-
-//+
-//+
-Curve Loop(30) = {27, 30, 33, 35};
-//+
-Plane Surface(26) = {30};
-//+
-Physical Surface("miolo", 4) = {25};
-//+
-//+
-Hide "*";
-//+
-Show {
-  Point{16}; Point{17}; Point{18}; Point{19}; Curve{27}; Curve{30}; Curve{33}; Curve{35}; Surface{25}; 
-}
-

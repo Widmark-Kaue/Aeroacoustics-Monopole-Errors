@@ -2,32 +2,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-import gmsh as gm
+import gmsh
 import pygmsh as pg
 import pyvista as pv
 import meshio
 
 from scipy.optimize import fsolve
-from pathlib import Path 
+from pathlib import Path
+from reloading import reloading
 
-PATH_MESH = Path().absolute().joinpath('mesh', 'monopoleFlow', 'mach0.2', 'circMesh.geo')
-PATH_SAVE_MESH = PATH_MESH.parent.parent.joinpath('msh')
-PATH_SAVE_MESH.mkdir(exist_ok=True)
-
-if not PATH_MESH.exists():
-    assert False, 'File not found'
-#%% loading mesh and save vtk file
-# gm.initialize()
-# gm.open(PATH_MESH.as_posix())
-# gm.write(PATH_SAVE_MESH.joinpath('circMesh.vtk').as_posix())
-# #%% pyvista manipulation
-# mesh = pv.read(PATH_SAVE_MESH.joinpath('circMesh.vtk'))
-# pl = pv.Plotter()
-
-# pl.add_mesh(mesh, style = 'wireframe', color ='k')
-# pl.camera_position = 'xy'
-# pl.show()
-# %%
+#%% check functions
 def is_parallel(u, v, tol = 1E-5):
     # Verificando se os vetores diretores são proporcionais
     cond1 = abs( u - v ) < tol
@@ -93,23 +77,44 @@ def  is_intercepted(triangle_points:np.ndarray, star_point:np.ndarray, final_poi
         return True
     else:
         return False   
-    
-# Carregar o arquivo .msh
-mesh = meshio.read(PATH_MESH.with_name('miolo.msh'))
+#%% Path objects
+PATH_MESH = Path().absolute().joinpath('mesh', 'monopoleFlow', 'mach0.2', 'cylinderSourceOPT.geo')
+PATH_SAVE_MESH = PATH_MESH.parent.parent.joinpath('msh')
+PATH_SAVE_MESH.mkdir(exist_ok=True)
 
+if not PATH_MESH.exists():
+    assert False, 'File not found'
+#%% loading mesh and save vtk file
+gmsh.initialize()
+gmsh.open(PATH_MESH.as_posix())
+gmsh.model.mesh.generate(2)
+
+# gmsh.fltk.run()
+
+#%% build connectivity matrix
+phisicalName = 'source'
+dimTag = gmsh.model.getPhysicalGroups(2)
+# for group in dimTag:
+#     # gmsh.model.getPhysicalName(group)
+
+#%%
 # Definir a linha de interceptação
 ponto_inicial = np.array([0, 0])# Coordenadas do ponto inicial da linha
 ponto_final = np.array([100, 0])  # Vetor direção da linha
+raio = np.sqrt(np.sum(ponto_final**2))
+
 
 # Encontrar os elementos interceptados
 interceptados = []
-cells = mesh.cells_dict['triangle']
-for i in range(len(cells)):
-    triangle_points = np.array([mesh.points[j] for j in cells[i]])           
-    if is_intercepted(triangle_points=triangle_points, star_point=ponto_inicial, final_point=ponto_final):
-        bar_centers = np.sum(triangle_points, axis = 0)/3
-        plt.plot(bar_centers[0], bar_centers[1], 'b^')  
-        interceptados.append(cells[i])
+# cells = mesh.cells_dict['triangle']
+# for i in reloading(range(len(cells))):
+#     triangle_points = np.array([mesh.points[j] for j in cells[i]])
+#     IS_UTIL_ZONE = not np.any(np.sqrt(np.sum(triangle_points**2, axis=1)) > raio)  
+#     # print(f'Triangle = {i} - {IS_UTIL_ZONE}')
+#     if IS_UTIL_ZONE and is_intercepted(triangle_points=triangle_points, star_point=ponto_inicial, final_point=ponto_final):
+#         bar_centers = np.sum(triangle_points, axis = 0)/3
+#         plt.plot(bar_centers[0], bar_centers[1], 'b^')  
+#         interceptados.append(cells[i])
 
 plt.plot([0,100], [0,0], 'r')
 plt.ylim([-100,100])
