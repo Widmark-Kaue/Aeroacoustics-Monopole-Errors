@@ -5,7 +5,8 @@ poetry.lock
 *.msh
 teste.txt
 msh/
-
+mach0.2_TCC
+images
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
