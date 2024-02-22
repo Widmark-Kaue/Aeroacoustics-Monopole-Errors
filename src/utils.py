@@ -1,47 +1,88 @@
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
+
 from re import sub
 from json import load
 from src.path import *
 from string import ascii_letters
 from src.postprocess import rmsSpacial
-from numpy import loadtxt, linspace, round, array
+from plotly.colors import DEFAULT_PLOTLY_COLORS as COLORS
+from numpy import loadtxt, linspace, round, array, searchsorted
+
+def importSpacialData(arqList: list, toPa: float, xsim_range: tuple) -> dict:
+    pressure    = {}
+    for arq in arqList:
+        p  = loadtxt(arq, comments='#')
+        p = p[1:]
+        name = sub('_',' ', arq.stem)
+        
+        if not xsim_range == None:
+            xsimVec = linspace(xsim_range[0], xsim_range[1], len(p))
+            left = searchsorted(xsimVec,xsim_range[2], side='left')
+            right =  searchsorted(xsimVec, xsim_range[3], side='right') + 1
+            p = p[left:right]   
+        pressure.update({name: p - toPa})
+    return pressure
+
+def importTimeData(arqList: list, toPa: float, num_probe:int) -> dict:
+    pressure = {}
+    for arq in arqList:
+        data = loadtxt(arq, comments='#')
+        p = data[:, 1:]
+        t = data[:,0]
+        name = sub('_', ' ', arq.stem)
+        
+        if not num_probe == None:
+            _,col = p.shape
+            assert num_probe <= col, 'Error: Num probe exceed number of probes'
+            p = p[:,num_probe]
+        pressure.update({name: (t, p - toPa)})
+    return pressure
 
 def importData(
         case       : str,
         test       : str,
+        subcase    : str    = '',
         subtest    : str    = '',
         time       : float  = 2,
         simulation : str    = 'monopoleFlow' ,
         toPa       : float  = 101325,
         keyword    : str    = None,
-        oldfile    : bool   = False
+        oldfile    : bool   = False,
+        xsim_range : tuple  = None,
+        num_probe  : int    = None,
+        typeFile   : str    = 'spacial' 
 )-> dict:
     
-    PATH_IMPORT = PATH_DATA.joinpath(simulation, case, test)
+    PATH_IMPORT = PATH_DATA.joinpath(simulation, case, test, subcase)
     
-    pressure    = {}
-    if keyword != None:
-        arqList = PATH_IMPORT.joinpath(str(time), subtest).glob(f'*{keyword}*')
+    if typeFile == 'spacial':
+        if keyword != None:
+            arqList = PATH_IMPORT.joinpath(str(time), subtest).glob(f'*{keyword}*')
+        else:
+            arqList = PATH_IMPORT.joinpath(str(time), subtest).iterdir()
+        
+        pressure = importSpacialData(arqList=arqList, toPa=toPa, xsim_range=xsim_range)
+    elif typeFile == 'time':
+        if keyword != None:
+            arqList = PATH_IMPORT.joinpath(subtest).glob(f'*{keyword}*')
+        else:
+            arqList = PATH_IMPORT.joinpath(subtest).iterdir()
+        pressure = importTimeData(arqList=arqList, toPa=toPa, num_probe=num_probe)
     else:
-        arqList = PATH_IMPORT.joinpath(str(time), subtest).iterdir()
-    
-    for arq in arqList:
-        p  = loadtxt(arq, comments='#')
-        name = sub('_',' ', arq.stem)
-        pressure.update({name: p[1:] - toPa})
+        assert False, 'Error: typeFile not recognized.'
     
     return pressure
-
+    
 def probes(
     name_of_archive : str,
     number_of_probes: int = 30,
     lim             : tuple = (2, 102),
     field           : str = 'p',
-    subpath         : Path = None
+    subpath         : Path = None,
+    p               : array = None
 )->None:
-    p = linspace(lim[0], lim[1], number_of_probes)
 
     arq = open(PATH_PROBES / 'templateProbe.txt', 'r').read()
 
@@ -49,17 +90,25 @@ def probes(
     arq = sub('@', field, arq)
 
     write = 'probeLocations\n\t\t(\n'
-    for i in p:
-        write += f'\t\t\t({round(i,3)} 0 0)\n'
-    write += '\t\t);'
-
+    
+    if p.any() == None:
+        p = linspace(lim[0], lim[1], number_of_probes)
+    
+        for i in p:
+            write += f'\t\t\t({round(i,3)} 0 0)\n'
+        write += '\t\t);'
+    else:
+        for i in range(len(p)):
+            write += f'\t\t\t({round(p[i,0],3)} {round(p[i,1],3)} 0)\n'
+        write += '\t\t);'
+         
     arq = sub('#', write, arq)
 
     
     if subpath == None:
         path = PATH_PROBES.joinpath(name_of_archive) 
     else: 
-        path = PATH_PROBES.joinpath(subpath.joinpath(name_of_archive))
+        path = PATH_PROBES.joinpath(subpath,name_of_archive)
         
     with open(path, 'w') as file:
         file.write(arq)
@@ -118,13 +167,21 @@ def plotSchemesGO(
         analitc  :Path = None,
         time     :float = 2,
         xsim     :tuple =( -104 , 104 ),
-        title    :str = 'unknow',
-        legend   :int = 1,
+        title    :str = '',
+        numlegend:int = 1,
+        legend   :list = None,
         windows  :bool = False,
-        save     :bool = False
+        rms_acur :int  = 2, 
+        save     :bool = False,
+        show     :bool = True,
+        format   :str  = 'html',
+        save_name:str  = None,
+        plotconfig:dict= dict()
         )-> None:
 
-        assert 0<=legend<=3, "Error: legend could be between 0 and 3"
+        assert 0<=numlegend<=3, "Error: numlegend could be between 0 and 3"
+        if not legend == None:
+            assert len(legend) == len(list(psim.keys())), 'Error: lengend list must be the same dimension of psim keys'
         
         #figure layout
         layout = go.Layout(
@@ -135,8 +192,7 @@ def plotSchemesGO(
         )
         
         # init object
-        fig = go.Figure(layout_xaxis_range = xsim, layout=layout)
-        ndata = 2
+        fig = go.Figure(layout=layout)
         
         if analitc !=None:
             if analitc.suffix == '.dat':
@@ -153,12 +209,11 @@ def plotSchemesGO(
                 assert False, "Erro: Invalid file"
                 
             
-            
             fig.add_trace(
                  go.Scatter(
                      visible=True,
-                     line = dict(width = 3, color = 'black'),
-                     name='Analitic Solution',
+                     line = dict(width = 2, color = 'black'),
+                     name='Solução analítica',
                      x = x,
                      y = p
                  )
@@ -178,36 +233,82 @@ def plotSchemesGO(
                     end   = pos 
                     ticks.append(xaux[end])
                 
-                fig.update_xaxes(tickvals = round(ticks,1), showgrid = True, gridcolor = 'gray')
-        
-        
+                fig.update_xaxes(
+                    tickvals = round(ticks,1), 
+                    ticktext = [-3, -1, 1, 3],
+                    showgrid = True, 
+                    gridcolor = 'gray',
+                    range = data['xlim']
+                    )
              
         # simulation
-        for scheme in psim:
-            name = " ".join(scheme.split(' ')[:legend]) 
+        for j, scheme in enumerate(psim):
+            if legend == None:
+                name = " ".join(scheme.split(' ')[:numlegend])
+            else:
+                name = legend[j] 
             addlabel = ''
-            if windows:
+            if windows and analitc!=None:
                  rms =  rmsSpacial((x,p), psim[scheme], xsim = xsim,windows=win)
                  for i in range(len(rms)):
-                     addlabel += f'win {i+1} = {round(rms[i]*100,2)} % '
+                     if i < len(rms) -1:
+                        addlabel += f'win {i+1} = {round(rms[i]*100,rms_acur)} % '
+                     else:
+                         addlabel += f'Total = {round(rms[i]*100,2)} %'
             xsimV = linspace(xsim[0], xsim[1], len(psim[scheme]))
             fig.add_trace(
                 go.Scatter(
                     mode= 'lines',
                     visible=True,
-                    line=dict(width = 3, backoff = 0.5, dash = 'dashdot'),
+                    line=dict(width = 2, backoff = 0.5, color = COLORS[j]),
                     name = name,
                     hovertext=addlabel,
                     x = xsimV,
-                    y = psim[scheme]
+                    y = psim[scheme],
+                    opacity=0.75
                 )
             )
             
-        fig.update_layout(title = dict(text = title, font = dict(color = 'black', family = 'Arial'), x = 0.5),
-                          xaxis_title = 'x [m]',
-                          yaxis_title = 'P [Pa]')
+        fig.update_layout(
+                        title = dict(
+                            text = title, 
+                            font = dict(
+                                color = 'black', 
+                                family = 'Times'
+                                ), 
+                            x = 0.5
+                        ),
+                        xaxis_title = dict(text = r'$x/\lambda_d$'),
+                        yaxis_title = dict( text = r'$P \ [Pa]$'),
+                        font = dict(
+                            color = 'black', 
+                            family = 'Times New Roman', 
+                            size = 22
+                        ),
+                        template = 'plotly_white',
+                        legend = dict(
+                            yanchor = 'top', 
+                            xanchor = 'right',
+                            x = 0.95, 
+                            font = dict(
+                                family = 'Times New Roman',
+                                size = 16,
+                                color = 'black'
+                            ) 
+                        ),
+                        **plotconfig
+        )
         
-        fig.show()
+        
+        if show: fig.show()
 
         if save:
-            fig.write_html(PATH_IMAGES.joinpath(f'{title}.html'))
+            name_image = save_name if save_name != None else 'unknow'
+            if format == 'html':
+                if not PATH_IMAGES.joinpath('plotly-interactive').exists(): PATH_IMAGES.joinpath('plotly-interactive').mkdir()
+                fig.write_html(PATH_IMAGES.joinpath('plotly-interactive',f'{name_image}.html'))
+            else:
+                if format not in name_image: name_image = f'{name_image}.{format}'
+                fig.write_image(PATH_IMAGES.joinpath('results',f'{name_image}'), format = format, scale = 5)
+        
+        return fig

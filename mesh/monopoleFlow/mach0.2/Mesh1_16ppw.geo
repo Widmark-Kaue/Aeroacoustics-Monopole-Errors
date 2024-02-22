@@ -12,7 +12,7 @@ ppw         = DefineNumber[16,                           Name "Mesh/ppw"];
 c           = DefineNumber[(2*rinner)/lambdaU * ppw,     Name "Mesh/c"];
 a         	= DefineNumber[50,                           Name "Mesh/a"];
 b         	= DefineNumber[100,                          Name "Mesh/b"];
-dprog       = DefineNumber[1.008,                        Name "Mesh/dprog"];
+dprog       = DefineNumber[1.02,                        Name "Mesh/dprog"];
 
 // Pontos quadrado interno
 Point(1) = {-rinner, rinner, 0, 1.0};

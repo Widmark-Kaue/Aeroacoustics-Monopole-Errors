@@ -132,21 +132,21 @@ s6=news; Plane Surface(s6) = {l7};
 out[]=Extrude {0, 0, depth} {
       Surface{s1, s2, s3, s4, s5, s6}; Layers {1}; Recombine;
 };
-//out2[]=Extrude {0, 0, depth} {
-//      Surface{s6}; Layers {1}; Recombine;
+out2[]=Extrude {0, 0, depth} {
+     Surface{s6}; Layers {1}; Recombine;
 //};
 //+
-/*
+
 Physical Surface("frontAndBack", 1) = {s1, s2, s3, s4, s5, s6, 12, 16, 19, 22, 24, 25}; 
 //+
 Physical Surface("outer", 2) = {7};
 //+
-//Physical Surface("cylinder", 3) = {4};
+Physical Surface("cylinder", 3) = {4};
 //+
 Physical Volume("internal") = {1, 2, 3, 4, 5, 6};
 //+
-//Physical Volume("source") = {6};
-*/
+Physical Volume("source") = {6};
+
 //+
 Field[1] = Distance;
 Field[1].SurfacesList = {8, 11, 10, 9};//{14, 17, 20, 23};
