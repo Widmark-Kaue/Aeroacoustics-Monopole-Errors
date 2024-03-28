@@ -10,8 +10,8 @@ images/
 data/monopoleFlow/*Mesh*
 data/monopoleFlow/mach0.2*
 data/monopoleFlow/analytical/*timeSteps*
-
-
+*.pkl
+data/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
