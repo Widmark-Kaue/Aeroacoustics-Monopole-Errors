@@ -3,11 +3,11 @@ import plotly.graph_objects as go
 from src.path import PATH_IMAGES
 from plotly.colors import DEFAULT_PLOTLY_COLORS as COLORS
 
-x = [8, 16, 32, 64]
-w1 = [68.72, 8.83, 3.88, 1.06]
-w2 = [22.02, 1.52, 3.38, 1.35]
-w3 = [18.62, 2.36, 0.25, 0.81]
-Total = [30.99, 3.07, 3.17, 1.24]
+x =     [8    ,   16,   32,   64]
+w1 =    [68.74, 8.83, 3.93, 1.04]
+w2 =    [22.02, 1.52, 3.37, 1.34]
+w3 =    [18.62, 2.37, 0.24, 0.79]
+Total = [30.99, 3.07, 3.17, 1.23]
 
 fig = go.Figure(layout=go.Layout(
             autosize=False,
@@ -86,4 +86,5 @@ fig.update_xaxes(title_text = r'$PPW$', tickvals = x)
 fig.update_yaxes(title_text = r'$Erro \ [\%]$')
 
 fig.show()
-fig.write_image(PATH_IMAGES.joinpath('results', 'erros_spacial_comp_ppw.png'), format = 'png', scale = 5)
+fig.write_image(PATH_IMAGES.joinpath('results', 'error', 'erros_spacial_comp_ppw.pdf'), format = 'pdf', scale = 5)
+fig.write_html(PATH_IMAGES.joinpath('plotly-interactive', 'error', 'erros_spacial_comp_ppw.html'))
