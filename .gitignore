@@ -7,10 +7,6 @@ teste.txt
 msh/
 plotly-interactive/
 images/
-data/
-data/monopoleFlow/*Mesh*
-data/monopoleFlow/mach0.2*
-data/monopoleFlow/analytical/*timeSteps*
 *.pkl
 data/
 
