@@ -95,7 +95,7 @@ for i, pos in enumerate(probes):
         numlegend=3,
         analitic= analitic_mach02,
         plotconfig=plotconfig,
-        format='pdf',
+        # format='pdf',
         save_name=f'Probe_{pos}_comp_PPW',
         save=True
     )
@@ -217,7 +217,7 @@ for ppw in [16, 32]:
         numlegend=1,
         analitic= analitic_mach02,
         plotconfig=plotconfig,
-        format='pdf',
+        # format='pdf',
         save_name=f'Probe_{pos}_comp_spacial_schemes_{ppw}PPW',
         save=True
     )
@@ -326,7 +326,7 @@ for ni,n in enumerate([400, 800, 1000]):
         numlegend=1,
         analitic= analitic_mach02,
         plotconfig=plotconfig,
-        format='pdf',
+        # format='pdf',
         save_name=f'Probe_{pos}_comp_time_schemes_n{n}',
         save=True
     )
