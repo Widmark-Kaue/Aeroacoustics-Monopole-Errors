@@ -154,8 +154,12 @@ def monopoleFlowSyE (
     
     if outName == None:
         outName = f'monopole_M{M}'
-        
-    filePath = savePath.joinpath(outName).with_suffix('.pkl')
+    
+    
+    filePath = savePath.joinpath(outName)
+    if filePath.suffix != '.pkl':
+        filePath = filePath.with_suffix('.pkl')
+    
     
     # variables
     P0, T0, R   = PTR
@@ -248,7 +252,7 @@ def monopoleFlowSyE (
         
         #Field resolution
         pFlow = fftconvolve(f, H, 'same')*deltax*deltay
-        time.update({f'{tk}': pFlow})
+        time.update({f'{float(tk)}': pFlow})
 
         
         if writeInterval == 1 or tk == t[-1]:
@@ -263,7 +267,7 @@ def monopoleFlowSyE (
             data['time'] = time
             with open(filePath, 'wb') as file:
                 pc.dump(data, file)
-               
+
 def pTime(analitic:Path, probePosition: tuple) -> tuple:
     
     if analitic.exists():
@@ -305,4 +309,40 @@ def pSpacial(analitic:Path, time: float, xpos: float = None, ypos: float = 0) ->
         
     return x, p
 
+def pRadial(analitic: Path, time: float, radius: float, theta:list = None, dtheta:float = 15) -> tuple:
+    time = float(time)
+    if theta == None:
+        theta = np.arange(0, 90 + dtheta, dtheta)
+    else:
+        theta = np.arange(theta[0], theta[1] + dtheta, dtheta)
+    
+    theta = np.deg2rad(theta)
+    x = radius*np.cos(theta)
+    y = radius*np.sin(theta)
+    
+    if analitic.exists():
+        if analitic.suffix == '.json':
+            with open(analitic, 'r') as file:
+                sim = load(file)
+                X   = sim['X'][0]
+                Y   = sim['Y'][:,0] 
+                p   = np.array(sim['time'][f'{time}']).T
+        
+        elif analitic.suffix == '.pkl':
+            sim = pd.read_pickle(analitic)            
+            X   = sim['X'][0]
+            Y   = sim['Y'][:,0]
+            p   = sim['time'][f'{time}'].T
+        else:
+            assert False, "Erro: Invalid file"
+
+    assert any(x <= radius) or any (y <= radius), "Error: Radius out of boundary domain"
+    xpos = np.searchsorted(X, x)
+    ypos = np.searchsorted(Y, y)
+    
+    # theta = 
+    
+    p = p[xpos[:], ypos]
+    return theta, p
+        
     
