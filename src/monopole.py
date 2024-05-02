@@ -10,7 +10,7 @@ from json import dump, load
 from scipy.signal import fftconvolve
 from scipy.special import hankel1
 from src.path import PATH_DATA, Path
-from typing import Union
+from typing import Union, Iterable
 
 def monopoleFlowSy (
     t:              Union[float, list] = 2,
@@ -309,16 +309,9 @@ def pSpacial(analitic:Path, time: float, xpos: float = None, ypos: float = 0) ->
         
     return x, p
 
-def pRadial(analitic: Path, time: float, radius: float, theta:list = None, dtheta:float = 15) -> tuple:
+def pRadial(analitic: Path, time: float, radius: Iterable[Union[float, int]], theta:list = None, dtheta:float = 15) -> tuple:
+    # load solution
     time = float(time)
-    if theta == None:
-        theta = np.arange(0, 90 + dtheta, dtheta)
-    else:
-        theta = np.arange(theta[0], theta[1] + dtheta, dtheta)
-    
-    theta = np.deg2rad(theta)
-    x = radius*np.cos(theta)
-    y = radius*np.sin(theta)
     
     if analitic.exists():
         if analitic.suffix == '.json':
@@ -335,12 +328,50 @@ def pRadial(analitic: Path, time: float, radius: float, theta:list = None, dthet
             p   = sim['time'][f'{time}'].T
         else:
             assert False, "Erro: Invalid file"
-
-    assert any(x <= radius) or any (y <= radius), "Error: Radius out of boundary domain"
-    xpos = np.searchsorted(X, x)
-    ypos = np.searchsorted(Y, y)
     
-    # theta = 
+    # Create theta vector
+    theta = np.arange(0, 90 + dtheta, dtheta)
+
+    theta = np.deg2rad(theta)
+    
+    if not isinstance(radius, Iterable):
+        radius = [radius]
+        
+    # Create data matrix
+    thetaS = []
+    pS = []        
+    for r in radius:
+        cond = any(X <= r) or any (Y <= r)
+
+        if cond:
+            x = np.round(r*np.cos(theta), 3)
+            y = np.round(r*np.sin(theta), 3)
+        
+            xpos = np.searchsorted(X, x)
+            ypos = np.searchsorted(Y, y)
+            
+            xdiff = np.insert(np.diff(xpos), 0, -1)
+            ydiff = np.insert(np.diff(ypos),len(ypos)-1, -1)
+            
+            xpos[xdiff==0] = xpos[xdiff==0] + 1
+            ypos[ydiff==0] = ypos[ydiff==0] + 1
+            
+            # 1º quadrant
+            xcoord = X[xpos]
+            ycoord = Y[xpos]
+
+            # 1º and 2 º quadrant
+            xcoord = np.insert(xcoord, len(xcoord), -xcoord[:-1])
+            ycoord = np.insert(ycoord, len(ycoord), ycoord[-2::-1])
+            
+            # 3º and 4º quadrant
+            xcoord = np.insert(xcoord, len(xcoord), xcoord[-2::-1])
+            ycoord = np.insert(ycoord, len(ycoord), -ycoord[1:])
+            
+            pS.append(p[xcoord, ycoord])
+        else:
+            print(f"Error: {r=} is out of boundary domain")
+    
     
     p = p[xpos[:], ypos]
     return theta, p
