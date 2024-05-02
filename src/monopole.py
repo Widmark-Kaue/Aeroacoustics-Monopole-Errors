@@ -3,14 +3,17 @@ Baseado no código do prof. Juan
 """
 import numpy as np
 import sympy as sy
+import pandas as pd
+import pickle as pc
 
 from json import dump, load
 from scipy.signal import fftconvolve
 from scipy.special import hankel1
 from src.path import PATH_DATA, Path
+from typing import Union, Iterable
 
 def monopoleFlowSy (
-    t:              float or list = 2,
+    t:              Union[float, list] = 2,
     xlim:           tuple = (-200, 200),
     ylim:           tuple = (-200, 200),
     nxy:            tuple = (401, 401),
@@ -130,7 +133,7 @@ def monopoleFlowSy (
                 dump(data, file)
         
 def monopoleFlowSyE (
-    t:              float or list = 2,
+    t:              Union[float, list] = 2,
     xlim:           tuple = (-200, 200),
     ylim:           tuple = (-200, 200),
     nxy:            tuple = (401, 401),
@@ -150,11 +153,13 @@ def monopoleFlowSyE (
     savePath.mkdir(exist_ok=True, parents=True)
     
     if outName == None:
-        outName = f'monopole_M{M}.json'
-    elif outName.split('.')[-1] != 'json':
-        outName = f'{outName}.json'
-        
-    filePath = savePath.joinpath(outName) 
+        outName = f'monopole_M{M}'
+    
+    
+    filePath = savePath.joinpath(outName)
+    if filePath.suffix != '.pkl':
+        filePath = filePath.with_suffix('.pkl')
+    
     
     # variables
     P0, T0, R   = PTR
@@ -192,8 +197,8 @@ def monopoleFlowSyE (
     # create dict
     [X,Y] = np.meshgrid(x,y)
     DATA = {
-        'X'         : X.tolist(),
-        'Y'         : Y.tolist(),
+        'X'         : X,
+        'Y'         : Y,
         'freq'      : freq,
         'M'         : M,
         'c0'        : c0,
@@ -210,8 +215,8 @@ def monopoleFlowSyE (
         'ny'        : ny,
         'time'      : {}
     }
-    with open(filePath, 'w') as file:
-        dump(DATA, file)
+    with open(filePath, 'wb') as file:
+        pc.dump(DATA, file)
     
     # Time iterarion
     time = {}
@@ -247,20 +252,128 @@ def monopoleFlowSyE (
         
         #Field resolution
         pFlow = fftconvolve(f, H, 'same')*deltax*deltay
-        time.update({f'{tk}': pFlow.tolist()})
+        time.update({f'{float(tk)}': pFlow})
 
-        cond = True if writeInterval == 1 else (it+1)%writeInterval == 0
-        if cond:
-            with open(filePath, 'r') as file:
-                data = load(file)
+        
+        if writeInterval == 1 or tk == t[-1]:
+            cond = True
+        else:
+            cond = (it+1)%writeInterval == 0 
+        
+        if cond:    
+            data = pd.read_pickle(filePath)
             
             # update time dictionary
             data['time'] = time
-            with open(filePath, 'w') as file:
-                dump(data, file)
-        
-        
-        
-    
+            with open(filePath, 'wb') as file:
+                pc.dump(data, file)
 
+def pTime(analitic:Path, probePosition: tuple) -> tuple:
+    
+    if analitic.exists():
+        sim = pd.read_pickle(analitic)
+                       
+        x, y = probePosition
+        idx = list(sim['X'][0]).index(x)                 
+        idy = list(sim['Y'][:, 0]).index(y)                 
+        
+        t = np.array(list(sim['time'].keys())).astype(float)
+        p = np.array([sim['time'][f'{time}'].T[idy, idx] for time in t])
+    else:
+        assert False, "Erro: Invalid file"
+    
+    return t, p        
+    
+def pSpacial(analitic:Path, time: float, xpos: float = None, ypos: float = 0) -> tuple:
+    time = float(time)
+    if analitic.exists():
+        if analitic.suffix == '.dat':
+                x, p = np.loadtxt(analitic, unpack=True)
+        
+        elif analitic.suffix == '.json':
+            with open(analitic, 'r') as file:
+                data = load(file)
+                nx = data['nx']
+                ny = data['ny']
+                idy  = np.searchsorted(np.linspace(data['ylim'][0], data['ylim'][1], ny), ypos)
+                x  = np.linspace(data['xlim'][0], data['xlim'][1], nx)
+                p  = np.array(data['time'][f'{time}']).T[idy]
+        
+        elif analitic.suffix == '.pkl':
+            sim = pd.read_pickle(analitic)            
+            idy = np.searchsorted(sim['Y'][:,0], ypos)
+            x = sim['X'][0]
+            p = sim['time'][f'{time}'].T[idy]
+        else:
+            assert False, "Erro: Invalid file"
+        
+    return x, p
+
+def pRadial(analitic: Path, time: float, radius: Iterable[Union[float, int]], theta:list = None, dtheta:float = 15) -> tuple:
+    # load solution
+    time = float(time)
+    
+    if analitic.exists():
+        if analitic.suffix == '.json':
+            with open(analitic, 'r') as file:
+                sim = load(file)
+                X   = sim['X'][0]
+                Y   = sim['Y'][:,0] 
+                p   = np.array(sim['time'][f'{time}']).T
+        
+        elif analitic.suffix == '.pkl':
+            sim = pd.read_pickle(analitic)            
+            X   = sim['X'][0]
+            Y   = sim['Y'][:,0]
+            p   = sim['time'][f'{time}'].T
+        else:
+            assert False, "Erro: Invalid file"
+    
+    # Create theta vector
+    theta = np.arange(0, 90 + dtheta, dtheta)
+
+    theta = np.deg2rad(theta)
+    
+    if not isinstance(radius, Iterable):
+        radius = [radius]
+        
+    # Create data matrix
+    thetaS = []
+    pS = []        
+    for r in radius:
+        cond = any(X <= r) or any (Y <= r)
+
+        if cond:
+            x = np.round(r*np.cos(theta), 3)
+            y = np.round(r*np.sin(theta), 3)
+        
+            xpos = np.searchsorted(X, x)
+            ypos = np.searchsorted(Y, y)
+            
+            xdiff = np.insert(np.diff(xpos), 0, -1)
+            ydiff = np.insert(np.diff(ypos),len(ypos)-1, -1)
+            
+            xpos[xdiff==0] = xpos[xdiff==0] + 1
+            ypos[ydiff==0] = ypos[ydiff==0] + 1
+            
+            # 1º quadrant
+            xcoord = X[xpos]
+            ycoord = Y[xpos]
+
+            # 1º and 2 º quadrant
+            xcoord = np.insert(xcoord, len(xcoord), -xcoord[:-1])
+            ycoord = np.insert(ycoord, len(ycoord), ycoord[-2::-1])
+            
+            # 3º and 4º quadrant
+            xcoord = np.insert(xcoord, len(xcoord), xcoord[-2::-1])
+            ycoord = np.insert(ycoord, len(ycoord), -ycoord[1:])
+            
+            pS.append(p[xcoord, ycoord])
+        else:
+            print(f"Error: {r=} is out of boundary domain")
+    
+    
+    p = p[xpos[:], ypos]
+    return theta, p
+        
     

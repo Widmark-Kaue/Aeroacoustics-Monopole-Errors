@@ -1,12 +1,14 @@
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
-
 from re import sub
 from json import load
 from src.path import *
+from typing import Union
+from pandas import read_pickle
 from string import ascii_letters
 from src.postprocess import rmsSpacial
+from src.monopole import pTime, pSpacial
 from plotly.colors import DEFAULT_PLOTLY_COLORS as COLORS
 from numpy import loadtxt, linspace, round, array, searchsorted
 
@@ -179,136 +181,252 @@ def plotSchemesGO(
         plotconfig:dict= dict()
         )-> None:
 
-        assert 0<=numlegend<=3, "Error: numlegend could be between 0 and 3"
-        if not legend == None:
-            assert len(legend) == len(list(psim.keys())), 'Error: lengend list must be the same dimension of psim keys'
-        
-        #figure layout
-        layout = go.Layout(
-            autosize=False,
-            width=1000,
-            height=500,
-            margin=dict(l=10, r = 10, t = 25, b = 20),
-        )
-        
-        # init object
-        fig = go.Figure(layout=layout)
-        
-        if analitc !=None:
-            if analitc.suffix == '.dat':
-                x, p = loadtxt(analitc, unpack=True)
-            elif analitc.suffix == '.json':
-                with open(analitc, 'r') as file:
-                    data = load(file)
-                    nx = data['nx']
-                    ny = data['ny']
-                    ypos  = linspace(data['ylim'][0], data['ylim'][1], ny).searchsorted(0) 
-                    x  = linspace(data['xlim'][0], data['xlim'][1], nx)
-                    p  = array(data['time'][f'{time}']).T[ypos]
-            else:
-                assert False, "Erro: Invalid file"
-                
+    assert 0<=numlegend<=3, "Error: numlegend could be between 0 and 3"
+    if not legend == None:
+        assert len(legend) == len(list(psim.keys())), 'Error: lengend list must be the same dimension of psim keys'
+    
+    time = float(time)   
+    #figure layout
+    layout = go.Layout(
+        autosize=False,
+        width=1000,
+        height=500,
+        margin=dict(l=10, r = 10, t = 25, b = 20),
+    )
+    
+    # init object
+    fig = go.Figure(layout=layout)
+    
+    if analitc !=None:
+        x, p = pSpacial(analitc, float(time))
             
-            fig.add_trace(
-                 go.Scatter(
-                     visible=True,
-                     line = dict(width = 2, color = 'black'),
-                     name='Solução analítica',
-                     x = x,
-                     y = p
-                 )
-             )
-            if windows:
-                min_idx = x.searchsorted(xsim[0])
-                max_idx = x.searchsorted(xsim[1])+1
-                xaux = x[min_idx:max_idx]
-                
-                win = 3
-                window = (xaux[-1]- xaux[0])/win
-                pos = 0
-                ticks = [xaux[0]]
-                for i in range(win):
-                    begin = pos
-                    pos   = xaux.searchsorted(xaux[0] + (i+1)*window)
-                    end   = pos 
-                    ticks.append(xaux[end])
-                
-                fig.update_xaxes(
-                    tickvals = round(ticks,1), 
-                    ticktext = [-3, -1, 1, 3],
-                    showgrid = True, 
-                    gridcolor = 'gray',
-                    range = data['xlim']
-                    )
-             
-        # simulation
-        for j, scheme in enumerate(psim):
-            if legend == None:
-                name = " ".join(scheme.split(' ')[:numlegend])
-            else:
-                name = legend[j] 
-            addlabel = ''
-            if windows and analitc!=None:
-                 rms =  rmsSpacial((x,p), psim[scheme], xsim = xsim,windows=win)
-                 for i in range(len(rms)):
-                     if i < len(rms) -1:
-                        addlabel += f'win {i+1} = {round(rms[i]*100,rms_acur)} % '
-                     else:
-                         addlabel += f'Total = {round(rms[i]*100,2)} %'
-            xsimV = linspace(xsim[0], xsim[1], len(psim[scheme]))
-            fig.add_trace(
+        
+        fig.add_trace(
                 go.Scatter(
-                    mode= 'lines',
                     visible=True,
-                    line=dict(width = 2, backoff = 0.5, color = COLORS[j]),
-                    name = name,
-                    hovertext=addlabel,
-                    x = xsimV,
-                    y = psim[scheme],
-                    opacity=0.75
+                    line = dict(width = 2, color = 'black'),
+                    name='Solução analítica',
+                    x = x,
+                    y = p
                 )
             )
+        if windows:
+            min_idx = x.searchsorted(xsim[0])
+            max_idx = x.searchsorted(xsim[1])+1
+            xaux = x[min_idx:max_idx]
             
-        fig.update_layout(
-                        title = dict(
-                            text = title, 
-                            font = dict(
-                                color = 'black', 
-                                family = 'Times'
-                                ), 
-                            x = 0.5
-                        ),
-                        xaxis_title = dict(text = r'$x/\lambda_d$'),
-                        yaxis_title = dict( text = r'$P \ [Pa]$'),
-                        font = dict(
-                            color = 'black', 
-                            family = 'Times New Roman', 
-                            size = 22
-                        ),
-                        template = 'plotly_white',
-                        legend = dict(
-                            yanchor = 'top', 
-                            xanchor = 'right',
-                            x = 0.95, 
-                            font = dict(
-                                family = 'Times New Roman',
-                                size = 16,
-                                color = 'black'
-                            ) 
-                        ),
-                        **plotconfig
+            win = 3
+            window = (xaux[-1]- xaux[0])/win
+            pos = 0
+            ticks = [xaux[0]]
+            for i in range(win):
+                begin = pos
+                pos   = xaux.searchsorted(xaux[0] + (i+1)*window)
+                end   = pos 
+                ticks.append(xaux[end])
+            
+            fig.update_xaxes(
+                tickvals = round(ticks,1), 
+                ticktext = [-3, -1, 1, 3],
+                showgrid = True, 
+                gridcolor = 'gray',
+                range = (x[0], x[-1])
+                )
+            
+    # simulation
+    for j, scheme in enumerate(psim):
+        if legend == None:
+            name = " ".join(scheme.split(' ')[:numlegend])
+        else:
+            name = legend[j] 
+        addlabel = ''
+        if windows and analitc!=None:
+                rms =  rmsSpacial((x,p), psim[scheme], xsim = xsim,windows=win)
+                for i in range(len(rms)):
+                    if i < len(rms) -1:
+                        addlabel += f'win {i+1} = {round(rms[i]*100,rms_acur)} % '
+                    else:
+                        addlabel += f'Total = {round(rms[i]*100,2)} %'
+        xsimV = linspace(xsim[0], xsim[1], len(psim[scheme]))
+        fig.add_trace(
+            go.Scatter(
+                mode= 'lines',
+                visible=True,
+                line=dict(width = 2, backoff = 0.5, color = COLORS[j]),
+                name = name,
+                hovertext=addlabel,
+                x = xsimV,
+                y = psim[scheme],
+                opacity=0.75
+            )
         )
         
-        
-        if show: fig.show()
+    fig.update_layout(
+                    title = dict(
+                        text = title, 
+                        font = dict(
+                            color = 'black', 
+                            family = 'Times'
+                            ), 
+                        x = 0.5
+                    ),
+                    xaxis_title = dict(text = r'$x/\lambda_d$'),
+                    yaxis_title = dict( text = r'$P \ [Pa]$'),
+                    font = dict(
+                        color = 'black', 
+                        family = 'Times New Roman', 
+                        size = 22
+                    ),
+                    template = 'plotly_white',
+                    legend = dict(
+                        yanchor = 'top', 
+                        xanchor = 'right',
+                        x = 0.95, 
+                        font = dict(
+                            family = 'Times New Roman',
+                            size = 16,
+                            color = 'black'
+                        ) 
+                    ),
+                    **plotconfig
+    )
+    
+    
+    if show: fig.show()
 
-        if save:
+    if save:
+        name_image = save_name if save_name != None else 'unknow'
+        if format == 'html':
+            save_path = PATH_IMAGES.joinpath('plotly-interactive', f'spacial-{time}s')
+            save_path.mkdir(parents=True, exist_ok=True)
+            image_path = save_path.joinpath(f'{name_image}').with_suffix('.html')
+            
+            fig.write_html(image_path)
+        else:
+            save_path = PATH_IMAGES.joinpath('results', f'spacial-{time}s')
+            save_path.mkdir(parents=True, exist_ok=True)
+            image_path = save_path.joinpath(f'{name_image}').with_suffix(f'{format if "." in format else "."+format}')
+            
+            fig.write_image(image_path, format = format, scale = 5)
+    
+    return fig
+    
+def plotTempGO(
+        psim            :dict,
+        probePosition    :tuple,
+        numProbe        :int, 
+        analitic         :Path = None,
+        transientTime   :float = 0.5,
+        titlePlot       :str = '',
+        numlegend       :int = 1,
+        legend          :list = None,
+        save            :bool = False,
+        show            :bool = True,
+        format          :str  = 'html',
+        save_name       :str  = None,
+        plotconfig      :dict= dict(),
+        returnFig       :bool = False,
+        )-> Union[None, go.Figure]:
+    
+    #figure layout
+    layout = go.Layout(
+        autosize=False,
+        width=1000,
+        height=500,
+        margin=dict(l=10, r = 10, t = 25, b = 20),
+    )
+    
+    # init object
+    fig = go.Figure(layout=layout)
+    
+    if analitic !=None:
+        t, p = pTime(analitic, probePosition)
+            
+        
+        fig.add_trace(
+                go.Scatter(
+                    visible=True,
+                    line = dict(width = 2, color = 'black'),
+                    name='Solução analítica',
+                    x = t,
+                    y = p
+                )
+            )
+    
+    # simulation
+    for j, scheme in enumerate(psim):
+        if legend == None:
+            name = " ".join(scheme.split(' ')[:numlegend])
+        else:
+            name = legend[j]
+        
+        tprobe, pprobe = psim[scheme]
+        idt = searchsorted(tprobe, transientTime)
+        
+        fig.add_trace(
+            go.Scatter(
+                mode= 'lines',
+                visible=True,
+                line=dict(width = 2, backoff = 0.5, color = COLORS[j]),
+                name = name,
+                x = tprobe[idt:],
+                y = pprobe[idt:, numProbe],
+                opacity=0.75
+            )
+        )
+        
+        ## Compute Error
+        
+        
+    fig.update_layout(
+                    title = dict(
+                        text = titlePlot, 
+                        font = dict(
+                            color = 'black', 
+                            family = 'Times',
+                            size = 12
+                            ), 
+                        x = 0.5
+                    ),
+                    xaxis_title = dict(text = r'$Time \ [s]$'),
+                    yaxis_title = dict( text = r'$P \ [Pa]$'),
+                    font = dict(
+                        color = 'black', 
+                        family = 'Times New Roman', 
+                        size = 22
+                    ),
+                    template = 'plotly_white',
+                    legend = dict(
+                        yanchor = 'top', 
+                        xanchor = 'right',
+                        x = 0.95,
+                        font = dict(
+                            family = 'Times New Roman',
+                            size = 16,
+                            color = 'black'
+                        ) 
+                    ),
+                    **plotconfig
+    )
+    
+    
+    if show: fig.show()
+
+    if save:
             name_image = save_name if save_name != None else 'unknow'
             if format == 'html':
-                if not PATH_IMAGES.joinpath('plotly-interactive').exists(): PATH_IMAGES.joinpath('plotly-interactive').mkdir()
-                fig.write_html(PATH_IMAGES.joinpath('plotly-interactive',f'{name_image}.html'))
+                save_path = PATH_IMAGES.joinpath('plotly-interactive', f'time')
+                save_path.mkdir(parents=True, exist_ok=True)
+                image_path = save_path.joinpath(f'{name_image}').with_suffix('.html')
+                
+                fig.write_html(image_path)
             else:
-                if format not in name_image: name_image = f'{name_image}.{format}'
-                fig.write_image(PATH_IMAGES.joinpath('results',f'{name_image}'), format = format, scale = 5)
+                save_path = PATH_IMAGES.joinpath('results', f'time')
+                save_path.mkdir(parents=True, exist_ok=True)
+                image_path = save_path.joinpath(f'{name_image}').with_suffix(f'{format if "." in format else "."+format}')
+                
+                fig.write_image(image_path, format = format, scale = 5)
         
-        return fig
+    return fig
+        
+
