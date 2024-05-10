@@ -67,4 +67,26 @@ p2 = np.array(pressure['4.0']).T[ypos]
 plt.plot(x2, p2, 'm', label = 'Otimized solution')
 plt.legend()
 plt.show()
-#%% 
+
+#%% Solução para domínio extendido
+timeSteps = np.round(np.arange(0.2, 0.3, 0.001), 3)
+print(len(timeSteps))
+
+t0 = time()
+d = 6*42
+d = int(d)
+monopoleFlowSyE(
+    t               = timeSteps,
+    M               = 0.2,  
+    xlim            = (-d, d),
+    ylim            = (-d, d),
+    nxy             = (2*d+1, 2*d+1),
+    savePath        = PATH_ANALYTICAL,
+    printInterval   = 100,
+    writeInterval   = 100,
+    outName         = 'teste1',
+    parrallel       = True,
+)
+tf = time()
+print(f'Tempo = {tf - t0} s')
+# %%
