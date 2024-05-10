@@ -23,6 +23,7 @@ trame-vuetify = "^2.3.1"
 img2pdf = "^0.5.1"
 reloading = "^1.1.2"
 kaleido = "0.2.1"
+joblib = "^1.4.2"
 
 [tool.blue]
 include = ["src/utils.py", "src/path.py", "src/builder.py", "scripts/wave_length.py"]
