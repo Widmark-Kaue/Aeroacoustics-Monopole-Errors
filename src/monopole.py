@@ -11,6 +11,7 @@ from scipy.signal import fftconvolve
 from scipy.special import hankel1
 from src.path import PATH_DATA, Path
 from typing import Union, Iterable
+from joblib import Parallel, delayed
 
 def monopoleFlowSy (
     t:              Union[float, list] = 2,
@@ -145,7 +146,9 @@ def monopoleFlowSyE (
     writeInterval:  int   = 1,
     printInterval:  float = 10,
     savePath:       Path  = PATH_DATA,
-    outName:        str   = None
+    outName:        str   = None,
+    parrallel:      bool  = False,
+    njobs:          int   = -1 
 )->None:
     assert 0 <= M <= 1, 'mach number must be between 0 and 1'
     
@@ -229,26 +232,46 @@ def monopoleFlowSyE (
     y_squared = y**2
     for it, tk in enumerate(t):
         print(5*'-'+f' t obs = {tk} '+'-'*5)
+        
+        if parrallel:
+            result = Parallel(n_jobs=njobs) (delayed(solve_parallel)(
+                Hsy = Hsy, 
+                Hsy_np = Hsy_np, 
+                y = y,
+                y_squared = y_squared,
+                tk = tk, 
+                xi = xi,
+                epsilon =epsilon,
+                alpha = alpha,
+                symbols = (xSy, ySy, tSy), 
+                printInterval = printInterval) for xi in x)
+        
         for i, xi in enumerate(x):
-            xi_squared = xi**2      # cache
-            if xi == 0:
-                zero_pos = list(y).index(0)
-                H[i, :zero_pos  ] = Hsy_np(xi,   y[:zero_pos  ], tk)
-                H[i, zero_pos+1:] = Hsy_np(xi, y[zero_pos+1:], tk)
-                H[i, zero_pos] = Hsy.xreplace(
-                    {
-                        xSy: xi,
-                        ySy: y[zero_pos],
-                        tSy: tk,
-                    }
-                ).evalf()
+            if not parrallel:
+                    xi_squared = xi**2      # cache
+                    if xi == 0:
+                        zero_pos = list(y).index(0)
+                        H[i, :zero_pos  ] = Hsy_np(xi,   y[:zero_pos  ], tk)
+                        H[i, zero_pos+1:] = Hsy_np(xi, y[zero_pos+1:], tk)
+                        H[i, zero_pos] = Hsy.xreplace(
+                            {
+                                xSy: xi,
+                                ySy: y[zero_pos],
+                                tSy: tk,
+                            }
+                        ).evalf()
+                    else:
+                        H[i] = Hsy_np(xi, y, tk)
+                        
+                    # Gaussian distribution of amplitude
+                    f[i] = epsilon * np.exp(-alpha * (xi_squared + y_squared))
+                    if xi%printInterval == 0:
+                        print(f' - X = {xi} - Complete')
             else:
-                H[i] = Hsy_np(xi, y, tk)
+                faux, Haux = result[i]
+                H[i] = Haux
+                f[i] = faux
                 
-            # Gaussian distribution of amplitude
-            f[i] = epsilon * np.exp(-alpha * (xi_squared + y_squared))
-            if xi%printInterval == 0:
-                print(f' - X = {xi} - Complete')
         
         #Field resolution
         pFlow = fftconvolve(f, H, 'same')*deltax*deltay
@@ -376,4 +399,39 @@ def pRadial(analitic: Path, time: float, radius: Iterable[Union[float, int]], th
     p = p[xpos[:], ypos]
     return theta, p
         
+def solve_parallel(
+    Hsy:any, 
+    Hsy_np:any, 
+    y:np.ndarray, 
+    y_squared:np.ndarray,
+    tk:float, 
+    xi:float,
+    epsilon:float,
+    alpha:float,
+    symbols:tuple,
+    printInterval:float 
+    )-> tuple:
     
+        xSy, ySy, tSy = symbols
+        H = np.zeros(len(y))
+        f = np.zeros(len(y))
+        xi_squared = xi**2      # cache
+        if xi == 0:
+            zero_pos = list(y).index(0)
+            H[:zero_pos] = Hsy_np(xi,   y[:zero_pos  ], tk)
+            H[zero_pos+1:] = Hsy_np(xi, y[zero_pos+1:], tk)
+            H[zero_pos] = Hsy.xreplace(
+                {
+                    xSy: xi,
+                    ySy: y[zero_pos],
+                    tSy: tk,
+                }
+            ).evalf()
+        else:
+            H= Hsy_np(xi, y, tk)
+            
+        # Gaussian distribution of amplitude
+        f = epsilon * np.exp(-alpha * (xi_squared + y_squared))
+        if xi%printInterval == 0:
+            print(f' - X = {xi} - Complete')
+        return f, H
