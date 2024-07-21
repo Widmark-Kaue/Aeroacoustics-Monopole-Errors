@@ -49,7 +49,7 @@ plotconfig2 = dict(
         )
        
 #%% TransientTime
-psim = importData(
+""" psim = importData(
     case = 'mach0.2_TCC_retol0',
     test='circMesh_ZU', 
     subcase='standard-TimeData',
@@ -75,9 +75,10 @@ for i, pos in enumerate(probes):
     plt.ylim([0, np.max(psim_peak_rel) + 1])
     plt.title(lb)
     plt.legend()
-    plt.show()
+    plt.show() """
 
 #%% EVOLTUTION OF ERROR WITH DISCRETIZATION
+""" """ 
 psim = importData(
     case = 'mach0.2_TCC_retol0',
     test='circMesh_ZU', 
@@ -85,21 +86,27 @@ psim = importData(
     typeFile='time'
 )
 
-fig = make_subplots(1,2)
+psimSort = {}
+
+for key in sorted(psim, key= lambda x: int(x.split(' ')[1].replace('ppw',''))):
+    print(key)
+    psimSort[key.split(' ')[1].replace('ppw', ' ppw')] = psim[key]
+# fig = make_subplots(1,2)
 
 for i, pos in enumerate(probes):
     plotTempGO(
-        psim=psim,
+        psim=psimSort,
         probePosition=(probesPos[i], 0),
         numProbe=pos,
-        numlegend=3,
+        numlegend=2,
         analitic= analitic_mach02,
         plotconfig=plotconfig,
-        # format='pdf',
+        format='pdf',
         save_name=f'Probe_{pos}_comp_PPW',
         save=True
     )
     
+    """
     ta, pa = pTime(analitic_mach02, (probesPos[i], 0))
     
     inital_time_a = np.searchsorted(ta, transientTime)
@@ -176,27 +183,33 @@ fig.update_xaxes(title_text = r'$PPW$', tickvals = ppw, **plotconfig2, row=1, co
 fig.update_yaxes(title_text = r'$Erro \ de \ Amplitude \ [\%]$',  **plotconfig2, row = 1, col=1)
 fig.update_yaxes(title_text = r'$Erro \ de \ Fase \ [deg]$',    **plotconfig2, row = 1, col=2)
 
-fig.show()
+fig.show() 
+
 
 name = 'erros_time_comp_ppw'
 save_interaticve = PATH_IMAGES.joinpath('plotly-interactive', 'error', f'{name}.html')
 save_image = PATH_IMAGES.joinpath('results', 'error', f'{name}.pdf')
 fig.write_html(save_interaticve)
-fig.write_image(save_image, format ='pdf', scale = 5)
+fig.write_image(save_image, format ='pdf', scale = 5) """
  # %% VARIAÇÃO DOS ESQUEMAS ESPACIAIS
-for ppw in [16, 32]:
+moving_avg = [5, 5]
+probes = [1, 4, 5, 6, 14, 15, 16, 19]
+probesPos = [-189, -126, -105,-84, 84, 105, 126, 189]
+coord = [-4.5, -3, -2.5, -1.5, 1.5, 2.5, 3, 4.5]
+analitic = analitic_mach02.with_name('monopole_10Hz_M02_t02_4s_ZU6.pkl')
+for ppw in [32]:
     aux = f'{ppw} PPW'
     print(f'{aux:-^20}')
     psimS = importData(
         case = 'mach0.2_TCC_retol0',
-        test='circMesh_ZU', 
+        test='circMesh_4.5ZU_15ZS', 
         subcase='spacialSchemes-TimeData',
         typeFile='time',
         keyword=f'{ppw}ppw'
     )
     psimaux = importData(
         case = 'mach0.2_TCC_retol0',
-        test='circMesh_ZU', 
+        test='circMesh_4.5ZU_15ZS', 
         subcase='standard-TimeData',
         typeFile='time',
         keyword=f'{ppw}ppw'
@@ -204,25 +217,27 @@ for ppw in [16, 32]:
     psim = {**psimS, **psimaux}
     schemes = [i.split(' ')[0] for i in list(psim.keys())]
 
-    fig = make_subplots(1,2, specs= [[{'type':'bar'}]*2])
+
+    # fig = make_subplots(1,2, specs= [[{'type':'bar'}]*2])
     
     dataAmp = []
     dataPhase = []
     
     for i, pos in enumerate(probes):
-        plotTempGO(
+        fig, image_path=plotTempGO(
         psim=psim,
         probePosition=(probesPos[i], 0),
         numProbe=pos,
         numlegend=1,
-        analitic= analitic_mach02,
+        analitic= analitic,
         plotconfig=plotconfig,
-        # format='pdf',
-        save_name=f'Probe_{pos}_comp_spacial_schemes_{ppw}PPW',
+        format='pdf',
+        save_name=f'Probe_{pos}_comp_spacial_schemes_{ppw}PPW_4_5ZU',
         save=True
     )
-        
-        ta, pa = pTime(analitic_mach02, (probesPos[i], 0))
+        fig.write_image(image_path, format = 'pdf', scale = 5)
+        break
+"""   ta, pa = pTime(analitic, (probesPos[i], 0))
         
         inital_time_a = np.searchsorted(ta, transientTime)
         final_time_a  = np.searchsorted(ta, finalTime) + 1
@@ -234,9 +249,14 @@ for ppw in [16, 32]:
             
             inital_time_probe = np.searchsorted(tprobe, transientTime)
             final_time_probe  = np.searchsorted(tprobe, finalTime) + 1
-            
-            EPhase, EAmp = phaseAmplitude(pta = (ta[inital_time_a:final_time_a], pa[inital_time_a:final_time_a]),
+            try:
+                EPhase, EAmp = phaseAmplitude(pta = (ta[inital_time_a:final_time_a], pa[inital_time_a:final_time_a]),
                                         ptsim = (tprobe[inital_time_probe:final_time_probe], pprobe[inital_time_probe:final_time_probe, pos])
+                                        )
+            except:
+                EPhase, EAmp = phaseAmplitude(pta = (ta[inital_time_a:final_time_a], pa[inital_time_a:final_time_a]),
+                                        ptsim = (tprobe[inital_time_probe:final_time_probe], pprobe[inital_time_probe:final_time_probe, pos]),
+                                        moving_avg=2
                                         )
             ErrorPhase[j]=EPhase
             ErrorAmp[j]=EAmp
@@ -248,15 +268,15 @@ for ppw in [16, 32]:
             x = schemes, y = ErrorAmp*100, 
             name = legend, 
             showlegend=True   , marker=dict(color = COLORS[i]),
-            text = [f'{erro:.1f}' for erro in ErrorAmp*100],
-            textposition = 'outside'
+            # text = [f'{erro:.1f}' for erro in ErrorAmp*100],
+            # textposition = 'outside'
             ))
         dataPhase.append(go.Bar(
             x = schemes, y = ErrorPhase, 
             name=legend, 
             showlegend=False, marker=dict(color = COLORS[i]),
-            text = [f'{erro:.1f}' for erro in ErrorPhase],
-            textposition = 'outside'
+            #text = [f'{erro:.1f}' for erro in ErrorPhase],
+            #textposition = 'outside'
             ))
     
     fig.add_traces(dataAmp, rows=1, cols=1)
@@ -266,14 +286,14 @@ for ppw in [16, 32]:
             font = dict(
                 color = 'black', 
                 family = 'Times New Roman', 
-                size = 22
+                size = 24
             ),
             template = 'plotly_white',
             legend = dict(
                 # x = 0.95,
                 font = dict(
                     family = 'Times New Roman',
-                    size = 16,
+                    size = 22,
                     color = 'black'
                 ) 
             ),
@@ -290,48 +310,57 @@ for ppw in [16, 32]:
 
     fig.show()
 
-    name = f'erros_time_comp_spacial_schemes_{ppw}PPW'
-    save_interaticve = PATH_IMAGES.joinpath('plotly-interactive', 'error', f'{name}.html')
+    name = f'erros_time_comp_spacial_schemes_{ppw}PPW_4_5ZU'
+    #save_interaticve = PATH_IMAGES.joinpath('plotly-interactive', 'error', f'{name}.html')
     save_image = PATH_IMAGES.joinpath('results', 'error', f'{name}.pdf')
-    fig.write_html(save_interaticve)
-    fig.write_image(save_image, format ='pdf', scale = 5)
+    #fig.write_html(save_interaticve)
+    fig.write_image(save_image, format ='pdf', scale = 5) """
 
 # %% VARIAÇÃO DOS ESQUEMAS TEMPORAIS
-moving_avg = [10, 5, 5]
-for ni,n in enumerate([400, 800, 1000]):
+moving_avg = [5, 5]
+probes = [1, 4, 5, 6, 14, 15, 16, 19]
+probesPos = [-189, -126, -105,-84, 84, 105, 126, 189]
+coord = [-4.5, -3, -2.5, -1.5, 1.5, 2.5, 3, 4.5]
+analitic = analitic_mach02.with_name('monopole_10Hz_M02_t02_4s_ZU6.pkl')
+for ni,n in enumerate([800,1000]):
     aux = f'n = {n}'
     print(f'{aux:-^20}')
     psim = importData(
         case = 'mach0.2_TCC_retol0',
-        test='circMesh_ZU', 
+        test='circMesh_4.5ZU_15ZS', 
         subcase='timeSchemes-TimeData',
-        typeFile='time',
+        typeFile='time', 
         keyword=f'n{n}'
     )
-  
+    #psim[f'Crank-Nicolson 32ppw n{n}'] = psim.pop(f'crankNicolson 32ppw n{n}')
     schemes = [i.split(' ')[0] for i in list(psim.keys())]
 
-    fig = make_subplots(1,2, specs= [[{'type':'bar'}]*2])
+    # fig = make_subplots(1,2, specs= [[{'type':'bar'}]*2])
     
     dataAmp = []
     dataPhase = []
     
+    psimSort = {}
+    for key in ['crankNicolson', 'Euler', 'backward']:
+        psimSort[key] = psim[f'{key} 32ppw n{n}']
+    
     for i, pos in enumerate(probes):
         aux = f'Probe n º{pos}'
         print(f'{aux:-^20}')
-        plotTempGO(
-        psim=psim,
+        fig, image_path=plotTempGO(
+        psim=psimSort,
         probePosition=(probesPos[i], 0),
         numProbe=pos,
         numlegend=1,
-        analitic= analitic_mach02,
+        analitic= analitic,
         plotconfig=plotconfig,
-        # format='pdf',
-        save_name=f'Probe_{pos}_comp_time_schemes_n{n}',
+        format='pdf',
+        save_name=f'Probe_{pos}_comp_time_schemes_n{n}_4_5ZU',
         save=True
     )
+        fig.write_image(image_path, format = 'pdf', scale = 5)
         
-        ta, pa = pTime(analitic_mach02, (probesPos[i], 0))
+        """ ta, pa = pTime(analitic, (probesPos[i], 0))
         
         inital_time_a = np.searchsorted(ta, transientTime)
         final_time_a  = np.searchsorted(ta, finalTime) + 1
@@ -358,15 +387,15 @@ for ni,n in enumerate([400, 800, 1000]):
             x = schemes,  y = ErrorAmp*100, 
             name = legend, 
             showlegend=True, marker=dict(color = COLORS[i]), 
-            text = [f'{erro:.1f}' for erro in ErrorAmp*100],
-            textposition = 'outside'
+            # text = [f'{erro:.1f}' for erro in ErrorAmp*100],
+            # textposition = 'outside'
             ))
         dataPhase.append(go.Bar(
             x = schemes, y = ErrorPhase, 
             name=legend, 
             showlegend=False, marker=dict(color = COLORS[i]), 
-            text = [f'{erro:.1f}' for erro in ErrorPhase],
-            textposition = 'outside'
+            # text = [f'{erro:.1f}' for erro in ErrorPhase],
+            # textposition = 'outside'
             ))
     
     fig.add_traces(dataAmp, rows=1, cols=1)
@@ -376,14 +405,14 @@ for ni,n in enumerate([400, 800, 1000]):
             font = dict(
                 color = 'black', 
                 family = 'Times New Roman', 
-                size = 22
+                size = 24
             ),
             template = 'plotly_white',
             legend = dict(
                 # x = 0.95,
                 font = dict(
                     family = 'Times New Roman',
-                    size = 16,
+                    size = 22,
                     color = 'black'
                 ) 
             ),
@@ -400,9 +429,125 @@ for ni,n in enumerate([400, 800, 1000]):
 
     fig.show()
 
-    name = f'erros_time_comp_time_schemes_n{n}'
-    save_interaticve = PATH_IMAGES.joinpath('plotly-interactive', 'error', f'{name}.html')
+    name = f'erros_time_comp_time_schemes_n{n}_4_5ZU'
+    #save_interaticve = PATH_IMAGES.joinpath('plotly-interactive', 'error', f'{name}.html')
     save_image = PATH_IMAGES.joinpath('results', 'error', f'{name}.pdf')
-    fig.write_html(save_interaticve)
-    fig.write_image(save_image, format ='pdf', scale = 5)
-# %%
+    #fig.write_html(save_interaticve)
+    fig.write_ image(save_image, format ='pdf', scale = 5)
+    """
+# %% VARIAÇÃO ESQUEMAS ESPACIAIS MALHA HÍBRIDA
+aux = f'{32} PPW'
+print(f'{aux:-^20}')
+psim = importData(
+    case = 'mach0.2_TCC_retol0',
+    test='hybridMesh', 
+    subcase='spacialSchemes-TimeData',
+    typeFile='time',
+    keyword=f'{32}ppw'
+)
+probes = [1, 4, 5, 6, 14, 15, 16, 19]
+probesPos = [-189, -126, -105,-84, 84, 105, 126, 189]
+coord = [-4.5, -3, -2.5, -1.5, 1.5, 2.5, 3, 4.5]
+
+schemes = [i.split(' ')[0] for i in list(psim.keys())]
+
+# fig = make_subplots(1,2, specs= [[{'type':'bar'}]*2])
+
+dataAmp = []
+dataPhase = []
+analitic = analitic_mach02.with_name('monopole_10Hz_M02_t02_4s_ZU6.pkl')
+
+psimSort = { }
+for key in sorted(psim):
+    psimSort[key] = psim[key]
+
+for i, pos in enumerate(probes):
+    fig, image_path= plotTempGO(
+    psim=psimSort,
+    probePosition=(probesPos[i], 0),
+    numProbe=pos,
+    numlegend=1,
+    analitic= analitic,
+    plotconfig=plotconfig,
+    format='pdf',
+    save_name=f'Probe_{pos}_comp_spacial_schemes_{32}PPW_hybrid',
+    save=True
+)
+    
+    fig.write_image(image_path, format = 'pdf', scale = 5)
+    
+""" ta, pa = pTime(analitic, (probesPos[i], 0))
+    
+    inital_time_a = np.searchsorted(ta, transientTime)
+    final_time_a  = np.searchsorted(ta, finalTime) + 1
+    
+    ErrorPhase = np.empty(len(psim))
+    ErrorAmp = np.empty(len(psim))
+    for j, scheme in enumerate(psim):
+        tprobe, pprobe = psim[scheme]
+        
+        inital_time_probe = np.searchsorted(tprobe, transientTime)
+        final_time_probe  = np.searchsorted(tprobe, finalTime) + 1
+        
+        EPhase, EAmp = phaseAmplitude(pta = (ta[inital_time_a:final_time_a], pa[inital_time_a:final_time_a]),
+                                    ptsim = (tprobe[inital_time_probe:final_time_probe], pprobe[inital_time_probe:final_time_probe, pos])
+                                    )
+        ErrorPhase[j]=EPhase
+        ErrorAmp[j]=EAmp
+    
+
+    print(f'{ErrorPhase=}')
+    legend = f'x = {coord[i]:^2}λd'
+    dataAmp.append(go.Bar(
+        x = schemes, y = ErrorAmp*100, 
+        name = legend, 
+        showlegend=True   , marker=dict(color = COLORS[i]),
+        # text = [f'{erro:.1f}' for erro in ErrorAmp*100],
+        # textposition = 'outside'
+        ))
+    dataPhase.append(go.Bar(
+        x = schemes, y = ErrorPhase, 
+        name=legend, 
+        showlegend=False, marker=dict(color = COLORS[i]),
+        # text = [f'{erro:.1f}' for erro in ErrorPhase],
+        # textposition = 'outside'
+        ))
+
+fig.add_traces(dataAmp, rows=1, cols=1)
+fig.add_traces(dataPhase, rows=1, cols=2)
+    
+fig.update_layout(
+        font = dict(
+            color = 'black', 
+            family = 'Times New Roman', 
+            size = 24
+        ),
+        template = 'plotly_white',
+        legend = dict(
+            # x = 0.95,
+            font = dict(
+                family = 'Times New Roman',
+                size = 22,
+                color = 'black'
+            ) 
+        ),
+        autosize=False,
+        width=1200,
+        height=500,
+        margin=dict(l=10, r = 10, t = 25, b = 20),
+        barmode = 'group'
+)
+fig.update_xaxes(title_text = r'$Esquemas Espaciais$', **plotconfig2, row=1, col=1)
+fig.update_xaxes(title_text = r'$Esquemas Espaciais$', **plotconfig2, row=1, col=2)
+fig.update_yaxes(title_text = r'$Erro \ de \ Amplitude \ [\%]$',  **plotconfig2, row = 1, col=1)
+fig.update_yaxes(title_text = r'$Erro \ de \ Fase \ [deg]$',    **plotconfig2, row = 1, col=2)
+
+fig.show()
+
+name = f'erros_time_comp_spacial_schemes_{32}PPW_hybrid'
+#save_interaticve = PATH_IMAGES.joinpath('plotly-interactive', 'error', f'{name}.html')
+save_image = PATH_IMAGES.joinpath('results', 'error', f'{name}.pdf')
+#fig.write_html(save_interaticve)
+fig.write_image(save_image, format ='pdf', scale = 5)
+
+ """

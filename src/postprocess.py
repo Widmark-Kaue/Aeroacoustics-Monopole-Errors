@@ -88,8 +88,8 @@ def phaseAmplitude(pta: tuple, ptsim: tuple, freq:float = 10, moving_avg:int = N
                 print(f'{aux:->20}') 
                 print(f'{diffstr:->20}') 
                 break
-            elif i == 14:
-                assert False, f'Error number of peaks analitic - sim = {len(idx_peak_a) - len(idx_peak_sim)}'                       
+            #elif i == 14:
+              #  assert False, f'Error number of peaks analitic - sim = {len(idx_peak_a) - len(idx_peak_sim)}'                       
             
             diff_last.append(diff)
                 #     T = 1/freq

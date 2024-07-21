@@ -38,6 +38,7 @@ plotconfig2 = dict(
             mirror =True,
         )
 
+
 #%% EVOLTUTION OF ERROR WITH DISCRETIZATION
 save_image_bool = True
 
@@ -81,10 +82,14 @@ analitic = analitic_mach02
 #%% Util and Exit Zone Test
 
 probes = [1, 4, 5, 6, 14, 15, 16, 19]
-probesPos = [-189, -126, -105, -63, 63, 105, 126, 189]
+probesPos = [-189, -126, -105,-84, 84, 105, 126, 189]
+coord = [-4.5, -3, -2.5, -1.5, 1.5, 2.5, 3, 4.5]
 case1 = '4_5ZU_15ZS'
 test = '4.5ZU_15ZS'
 analitic = analitic_mach02.with_name('monopole_10Hz_M02_t02_4s_ZU6.pkl')
+
+transientTime = 2
+finalTime     = 4
 
 psim = importData(
     case = 'mach0.2_TCC_retol0',
@@ -92,6 +97,13 @@ psim = importData(
     subcase='standard-TimeData',
     typeFile='time'
 )
+save_name = '4_5ZU'
+
+psimSort = {}
+
+for key in sorted(psim, key= lambda x: int(x.split(' ')[1].replace('ppw',''))):
+    print(key)
+    psimSort[key.split(' ')[1].replace('ppw', ' ppw')] = psim[key]
 
 #psim['4.5ZU 15ZS'] = psim.pop('vanLeer 32ppw n4000')
 
@@ -219,24 +231,24 @@ psim =importData(
 # psim['backward'] = psim.pop('vanLeer 32ppw n4000')
 
 #%% Plot
-fig = make_subplots(1,2)
+#fig = make_subplots(1,2)
 for i, pos in enumerate(probes):
-    plotTempGO(
-        psim=psim,
+    fig, image_path=plotTempGO(
+        psim=psimSort,
         probePosition=(probesPos[i], 0),
         numProbe=pos,
-        numlegend=3,
+        numlegend=2,
         analitic= analitic,
         plotconfig=plotconfig,
-        format='png',
+        format='pdf',
         save_name=f'Probe_{pos}_comp_32PPW_{save_name}',
         save=save_image_bool,
-        titlePlot= f'Probe = {probesPos[i]} m',
-        transientTime=0.2
+        transientTime=transientTime
     )
-    
-    """  
-    ta, pa = pTime(analitic_mach02, (probesPos[i], 0))
+    fig.write_image(image_path, format = 'pdf', scale = 5)
+    break
+    """   
+    ta, pa = pTime(analitic, (probesPos[i], 0))
     
     inital_time_a = np.searchsorted(ta, transientTime)
     final_time_a  = np.searchsorted(ta, finalTime) + 1
@@ -314,11 +326,13 @@ fig.update_yaxes(title_text = r'$Erro \ de \ Fase \ [deg]$',    **plotconfig2, r
 
 fig.show()
 if save_image_bool:
-    name = 'erros_time_comp_ppw'
+    name = f'erros_time_comp_ppw_{save_name}'
     save_interaticve = PATH_IMAGES.joinpath('plotly-interactive', 'error', f'{name}.html')
     save_image = PATH_IMAGES.joinpath('results', 'error', f'{name}.pdf')
-    fig.write_html(save_interaticve)
-    fig.write_image(save_image, format ='pdf', scale = 5)"""
+    save_image.parent.mkdir(exist_ok=True)
+    #save_interaticve.parent.mkdir(exist_ok=True)
+    #fig.write_html(save_interaticve)
+    fig.write_image(save_image, format ='pdf', scale = 5) """
  # %% VARIAÇÃO DOS ESQUEMAS ESPACIAIS
 """
 for ppw in [16, 32]:
