@@ -17,16 +17,6 @@ from src.utils import importData, plotTempGO
 
 
 #%%  parameters
-# probes = [0, 1, 3, 9, 11, 12]
-# probesPos = [-126, -105, -63, 63, 105, 126]
-# coord = [-3, -2.5, -1.5, 1.5, 2.5, 3]
-
-# probes = [ 1, 3, 9, 11]
-# probesPos = [-105, -63, 63, 105]
-# coord = [-2.5, -1.5, 1.5, 2.5]
-transientTime = 2
-finalTime     = 4
-
 analitic_mach02 = PATH_DATA.joinpath('monopoleFlow', 'analytical', 'monopole_10Hz_M0.2_t0.2_4.0s.pkl')
 plotconfig = dict(
         xaxis = dict(
@@ -51,49 +41,12 @@ plotconfig2 = dict(
 #%% EVOLTUTION OF ERROR WITH DISCRETIZATION
 save_image_bool = True
 
-
-
-# probes = [3, 4, 14, 15]
-# probesPos = [-126, -105, 105, 126]
-# case1 = '4_5DZ'
-# test = '4.5DZ'
-# analitic = analitic_mach02
-
-# psim = importData(
-#     case = 'mach0.2_TCC_retol0',
-#     test=f'circMesh_{test}', 
-#     subcase='standard-TimeData',
-#     typeFile='time'
-# )
-
-# psim[r'$r0_{dz} = 4.5\lambda_D$'] = psim.pop('vanLeer 32ppw n4000')
-
-
-# case2 = '3_2DZ'
-# test = '3.2DZ'
-# analitic = analitic_mach02
-
-# psim.update(
-#     importData(
-#         case = 'mach0.2_TCC_retol0',
-#         test=f'circMesh_{test}', 
-#         subcase='standard-TimeData',
-#         typeFile='time'
-#     )  
-# )
-# psim[r'$r0_{dz} = 3.2\lambda_D$'] = psim.pop('vanLeer 32ppw n4000')
-
-# probes = [0, 1, 11, 12]
-# probesPos = [-126, -105, 105, 126]
-# case = 'Middle_Zone'
-# test = 'Middle_zone'
-# analitic = analitic_mach02
-
-probes = [0, 1, 2, 18, 19, 20]
-probesPos = [ -202, -189, -168, 168, 189, 202]
-case1 = '4_5ZU_15ZS'
-test = '4.5ZU_15ZS'
-analitic = analitic_mach02.with_name('monopole_10Hz_M0.2_t0.2_4.0s_ZU6.pkl')
+#%% Damping Zone radius Test
+probes = [3, 4, 14, 15]
+probesPos = [-126, -105, 105, 126]
+case1 = '4_5DZ'
+test = '4.5DZ'
+analitic = analitic_mach02
 
 psim = importData(
     case = 'mach0.2_TCC_retol0',
@@ -102,9 +55,47 @@ psim = importData(
     typeFile='time'
 )
 
-psim['4.5ZU 15ZS'] = psim.pop('vanLeer 32ppw n4000')
+psim[r'$r0_{dz} = 4.5\lambda_D$'] = psim.pop('vanLeer 32ppw n4000')
 
-case2 = '4_5ZU_16.5ZS'
+
+case2 = '3_2DZ'
+test = '3.2DZ'
+analitic = analitic_mach02
+
+psim.update(
+    importData(
+        case = 'mach0.2_TCC_retol0',
+        test=f'circMesh_{test}', 
+        subcase='standard-TimeData',
+        typeFile='time'
+    )  
+)
+psim[r'$r0_{dz} = 3.2\lambda_D$'] = psim.pop('vanLeer 32ppw n4000')
+#%% Middle Zone Test
+
+probes = [0, 1, 11, 12]
+probesPos = [-126, -105, 105, 126]
+case = 'Middle_Zone'
+test = 'Middle_zone'
+analitic = analitic_mach02
+#%% Util and Exit Zone Test
+
+probes = [1, 4, 5, 6, 14, 15, 16, 19]
+probesPos = [-189, -126, -105, -63, 63, 105, 126, 189]
+case1 = '4_5ZU_15ZS'
+test = '4.5ZU_15ZS'
+analitic = analitic_mach02.with_name('monopole_10Hz_M02_t02_4s_ZU6.pkl')
+
+psim = importData(
+    case = 'mach0.2_TCC_retol0',
+    test=f'circMesh_{test}', 
+    subcase='standard-TimeData',
+    typeFile='time'
+)
+
+#psim['4.5ZU 15ZS'] = psim.pop('vanLeer 32ppw n4000')
+
+""" case2 = '4_5ZU_16.5ZS'
 test = '4.5ZU_16.5ZS'
 # analitic = analitic_mach02.with_name('monopole_10Hz_M02_t3s_t4s_ZU5.pkl')
 
@@ -117,9 +108,117 @@ psim.update(
     )
 )
 
-psim['4.5ZU 16.5ZS'] = psim.pop('vanLeer 32ppw n4000')
+psim['4.5ZU 16.5ZS'] = psim.pop('vanLeer 32ppw n4000') """
+#%% Damping Zone Test
 
-#%%
+
+probes = [0, 1, 11, 12]
+probesPos = [-126, -105, 105, 126]
+case1 = 'DZ_test'
+test = 'DZ_test'
+analitic = analitic_mach02
+
+psim = importData(
+    case = 'mach0.2_TCC_retol0',
+    test=f'circMesh_{test}', 
+    subcase='standard-TimeData',
+    typeFile='time'
+)
+
+psim['DZ'] = psim.pop('vanLeer 32ppw n4000')
+
+case2 = 'new_DZ'
+test = 'new_DZ'
+analitic = analitic_mach02
+
+psim.update(
+    importData(
+        case = 'mach0.2_TCC_retol0',
+        test=f'circMesh_{test}', 
+        subcase='standard-TimeData',
+        typeFile='time'
+    )  
+)
+psim['new DZ'] = psim.pop('vanLeer 32ppw n4000')
+
+#%% Unstructured mesh - DZ Test
+save_name = 'Unstructured'
+
+probes = [0, 1, 11, 12]
+probesPos = [-126, -105, 105, 126]
+case1 = 'standard_DZ'
+test = 'standard_DZ'
+analitic = analitic_mach02
+
+psim = importData(
+    case = 'mach0.2_TCC_retol0',
+    test=f'unstructured_circMesh_{test}', 
+    subcase='standard-TimeData',
+    typeFile='time'
+)
+
+psim['standard DZ'] = psim.pop('vanLeer 32ppw n4000')
+
+case2 = 'new_DZ'
+test = 'new_DZ'
+analitic = analitic_mach02
+
+psim.update(
+    importData(
+        case = 'mach0.2_TCC_retol0',
+        test=f'unstructured_circMesh_{test}', 
+        subcase='standard-TimeData',
+        typeFile='time'
+    )  
+)
+psim['new DZ'] = psim.pop('vanLeer 32ppw n4000')
+
+case3 = 'all_DZ'
+test = 'all_DZ'
+analitic = analitic_mach02
+
+psim.update(
+    importData(
+        case = 'mach0.2_TCC_retol0',
+        test=f'unstructured_circMesh_{test}', 
+        subcase='standard-TimeData',
+        typeFile='time'
+    )  
+)
+psim['all DZ'] = psim.pop('vanLeer 32ppw n4000')
+
+#%%Unstructured mesh - Time Schemes
+
+save_name = 'Unstructured_Comp_TimeSchemes'
+
+probes = [0, 1, 11, 12]
+probesPos = [-126, -105, 105, 126]
+case1 = 'standard_DZ'
+test = 'standard_DZ'
+analitic = analitic_mach02
+
+test = 'all_DZ'
+analitic = analitic_mach02
+
+# psim.update(
+#     importData(
+#         case = 'mach0.2_TCC_retol0',
+#         test=f'unstructured_circMesh_{test}', 
+#         subcase='standard-TimeData',
+#         typeFile='time'
+#     )  
+# )
+# psim['backward'] = psim.pop('vanLeer 32ppw n4000')
+
+psim =importData(
+        case = 'mach0.2_TCC_retol0',
+        test=f'unstructured_circMesh_{test}', 
+        subcase='timeSchemes-TimeData',
+        typeFile='time'
+    )  
+# psim['backward'] = psim.pop('vanLeer 32ppw n4000')
+
+#%% Plot
 fig = make_subplots(1,2)
 for i, pos in enumerate(probes):
     plotTempGO(
@@ -130,9 +229,10 @@ for i, pos in enumerate(probes):
         analitic= analitic,
         plotconfig=plotconfig,
         format='png',
-        save_name=f'Probe_{pos}_comp_32PPW_{case1}_{case2}',
+        save_name=f'Probe_{pos}_comp_32PPW_{save_name}',
         save=save_image_bool,
-        titlePlot= f'Probe = {probesPos[i]} m'
+        titlePlot= f'Probe = {probesPos[i]} m',
+        transientTime=0.2
     )
     
     """  
