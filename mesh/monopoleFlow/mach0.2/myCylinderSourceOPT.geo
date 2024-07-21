@@ -8,13 +8,13 @@ lambdaD  = DefineNumber[42,             Name "Parameters/lambda doppler"];
 
 rOuter= DefineNumber[ 15*lambdaD, Name "Parameters/rOuter" ];
 //+
-rMiddle=DefineNumber[ 6*lambdaD, Name "Parameters/rMiddle" ];
+rMiddle=DefineNumber[ 9*lambdaD, Name "Parameters/rMiddle" ];
 //+
-rInner= DefineNumber[ 3*lambdaD, Name "Parameters/rInner" ];
+rInner= DefineNumber[ 4.5*lambdaD, Name "Parameters/rInner" ];
 //+
 rPoints= DefineNumber[ 50, Name "Parameters/rPoints" ];
 //+
-cPoints= DefineNumber[ 100, Name "Parameters/cPoints" ];
+cPoints= DefineNumber[ 156, Name "Parameters/cPoints" ];
 //+
 rRatio= DefineNumber[ 1.02, Name "Parameters/rRatio" ];
 //+
@@ -65,7 +65,7 @@ c11=newc; Curve(c11) = {p8, p4};
 c12=newc; Curve(c12) = {p7, p3};
 //+
 c13=newc; Curve(c13) = {p5, p9};
-
+//+
 l1=newll; Curve Loop(l1) = {c6, c11, -c2, c10};
 //+
 l2=newll; Curve Loop(l2) = {-c11, c7, c12, -c3};
@@ -79,7 +79,7 @@ l5=newll; Curve Loop(l5) = {c6, c7, c8, c9};
 l6=newll; Curve Loop(l6) = {c1};
 //+
 l7=newll; Curve Loop(l7) = {c2, c3, c4, c5};
-
+//+
 Transfinite Curve {c2} = cPoints;
 //+
 Transfinite Curve {c3} = cPoints;
@@ -131,24 +131,22 @@ Transfinite Surface {s5};
 Recombine Surface{s5};
 //+
 s6=news; Plane Surface(s6) = {l7};
-
 //+
-out[]=Extrude {0, 0, depth} {
-      Surface{s1, s2, s3, s4, s5, s6}; Layers {1}; Recombine;
-};
+// out[]=Extrude {0, 0, depth} {
+//       Surface{s1, s2, s3, s4, s5, s6}; Layers {1}; Recombine;
+// };
 // out2[]=Extrude {0, 0, depth} {
 //      Surface{s6}; Layers {1}; Recombine;
 // };
 //+
-Physical Surface("frontAndBack", 1) = {s1, s2, s3, s4, s5, s6, 12, 16, 19, 22, 24, 25}; 
-// Physical Surface("frontAndBack", 1) = {s1, s2, s3, s4, s5, s6}; 
+Physical Surface("frontAndBack", 1) = {s1, s2, s3, s4, s5, s6};// 12, 16, 19, 22, 24, 25}; 
 //+
 Physical Surface("outer", 2) = {7};
 //+
-// Physical Surface("source") = {6};
+Physical Surface("source") = {6};
 // Physical Surface("cylinder", 3) = {4};
 //+
-Physical Volume("internal") = {1, 2, 3, 4, 5, 6};
+// Physical Volume("internal") = {1, 2, 3, 4, 5, 6};
 //+
 //+
 Field[1] = Distance;
