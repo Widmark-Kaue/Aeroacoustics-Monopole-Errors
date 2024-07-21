@@ -1,9 +1,11 @@
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
+
 from re import sub
 from json import load
 from src.path import *
+from time import sleep
 from typing import Union
 from pandas import read_pickle
 from string import ascii_letters
@@ -178,7 +180,8 @@ def plotSchemesGO(
         show     :bool = True,
         format   :str  = 'html',
         save_name:str  = None,
-        plotconfig:dict= dict()
+        plotconfig:dict= dict(),
+        ticktext = [-3, -1, 1, 3],
         )-> None:
 
     assert 0<=numlegend<=3, "Error: numlegend could be between 0 and 3"
@@ -227,10 +230,10 @@ def plotSchemesGO(
             
             fig.update_xaxes(
                 tickvals = round(ticks,1), 
-                ticktext = [-3, -1, 1, 3],
+                ticktext = ticktext,
                 showgrid = True, 
                 gridcolor = 'gray',
-                range = (x[0], x[-1])
+                range = (xsim[0], xsim[-1])
                 )
             
     # simulation
@@ -308,8 +311,9 @@ def plotSchemesGO(
             image_path = save_path.joinpath(f'{name_image}').with_suffix(f'{format if "." in format else "."+format}')
             
             fig.write_image(image_path, format = format, scale = 5)
+            sleep(2)
     
-    return fig
+    return fig, image_path
     
 def plotTempGO(
         psim            :dict,
@@ -427,6 +431,6 @@ def plotTempGO(
                 
                 fig.write_image(image_path, format = format, scale = 5)
         
-    return fig
+    return fig, image_path
         
 
