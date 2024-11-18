@@ -1,2 +1,2 @@
-*.html - linguagem=Other
 *.geo - linguagem=gmsh
+*.ipynb linguist-language=Python
